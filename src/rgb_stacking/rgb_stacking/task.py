@@ -62,10 +62,7 @@ import numpy as np
 
 # Margin from the joint limits at which to stop the Z rotation when using 4D
 # control. Values chosen to match the existing PyRobot-based environments.
-_WRIST_JOINT_LIMIT_MARGIN = 0.4
-WRIST_RANGE = (
-    sawyer_constants.JOINT_LIMITS['min'][-1] + _WRIST_JOINT_LIMIT_MARGIN,
-    sawyer_constants.JOINT_LIMITS['min'][-1] - _WRIST_JOINT_LIMIT_MARGIN)
+WRIST_RANGE = (-np.pi / 2, np.pi / 2)
 
 
 # Position of the basket relative to the attachment point of the robot.
