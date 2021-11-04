@@ -25,7 +25,7 @@ python3 -m venv "${TMP_DIR}/rgb_stacking"
 source "${TMP_DIR}/rgb_stacking/bin/activate"
 
 # Install dependencies.
-pip install --upgrade -r requirements.txt
+# pip install --upgrade -r requirements.txt
 
 # Run the visualization of the environment.
 python -m rgb_stacking.main

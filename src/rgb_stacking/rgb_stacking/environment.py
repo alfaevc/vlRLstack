@@ -28,6 +28,7 @@ import enum
 from typing import Sequence
 
 import dm_env
+import dm_robotics
 from dm_robotics import agentflow as af
 from dm_robotics.agentflow.preprocessors import observation_transforms
 from dm_robotics.agentflow.preprocessors import timestep_preprocessor as tsp
