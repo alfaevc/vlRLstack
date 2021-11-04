@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/CMakeFiles/abseil-cpp-populate"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/CMakeFiles/abseil-cpp-populate.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/CMakeFiles/abseil-cpp-populate-complete.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-install.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-mkdir.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-download.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-update.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-patch.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-configure.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-build.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/abseil-cpp-subbuild/abseil-cpp-populate-prefix/src/abseil-cpp-populate-stamp/abseil-cpp-populate-test.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"abseil-cpp-populate"
+		],
+		"name" : "abseil-cpp-populate"
+	}
+}

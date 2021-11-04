@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/CMakeFiles/eigen-populate"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/CMakeFiles/eigen-populate.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/CMakeFiles/eigen-populate-complete.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-install.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-mkdir.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-download.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-update.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-patch.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-configure.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-build.rule"
+		},
+		{
+			"file" : "/Users/inflalfa/Desktop/Columbia/robotics/final project/vlRLstack/src/rgb_stacking/dm_rob/cpp/build/temp.macosx-10.9-x86_64-3.8/_deps/eigen-subbuild/eigen-populate-prefix/src/eigen-populate-stamp/eigen-populate-test.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"eigen-populate"
+		],
+		"name" : "eigen-populate"
+	}
+}
