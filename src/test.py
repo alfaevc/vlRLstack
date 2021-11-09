@@ -4,11 +4,9 @@ from absl import app
 from dm_control import viewer
 from dm_robotics.moma import action_spaces
 
-from rgb_stacking import environment
+from rgb_stacking.rgb_stacking import environment
 
 import numpy as np
-
-
 
 
 def main(argv: Sequence[str]) -> None:
@@ -18,9 +16,6 @@ def main(argv: Sequence[str]) -> None:
     # Load the rgb stacking environment.
     env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
     step_type, reward, discount, obs = env.reset()
-    print(step_type)
-    print(reward)
-    print(discount)
     for i in obs:
         print("The dimension of {0} is {1}.".format(i, obs[i].shape))
     
@@ -31,8 +26,6 @@ def main(argv: Sequence[str]) -> None:
         print("The dimension of {0} is {1}.".format(i, obs[i].shape))
     
 
-    print(env.subtask._action_space._component_action_spaces)
-    print(env.subtask._action_space._composite_action_spec)
 
 
     # Launch the viewer application.

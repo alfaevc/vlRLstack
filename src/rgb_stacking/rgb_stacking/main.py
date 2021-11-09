@@ -16,8 +16,6 @@
 
 from typing import Sequence
 
-from typing import Sequence
-
 from absl import app
 from dm_control import viewer
 
@@ -29,12 +27,10 @@ def main(argv: Sequence[str]) -> None:
     del argv
 
     # Load the rgb stacking environment.
-    env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
-    state = env.reset()
-    print(state.shape)
+    env = environment.rgb_stacking(object_triplet='rgb_test_triplet1')
 
     # Launch the viewer application.
-    # viewer.launch(env)
+    viewer.launch(env)
     env.close()
 
 if __name__ == '__main__':
