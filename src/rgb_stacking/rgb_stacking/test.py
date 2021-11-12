@@ -26,7 +26,10 @@ def main(argv: Sequence[str]) -> None:
     
     state = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
     action = np.array([7.00e-02,7.00e-02, 7.00e-02, 1.00e+00, 2.55e+02])/2
-    _, next_reward, _, next_obs = env.step(action)
+    step_type, next_reward, discount, next_obs = env.step(action)
+    print(step_type)
+    print(next_reward)
+    print(discount)
     for i in next_obs:
         print("The dimension of {0} is {1}.".format(i, obs[i].shape))
     
