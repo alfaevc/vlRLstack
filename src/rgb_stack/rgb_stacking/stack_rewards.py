@@ -21,9 +21,9 @@ from dm_robotics.agentflow import spec_utils
 from dm_robotics.moma import prop
 import numpy as np
 
-from rgb_stacking import physics_utils
-from rgb_stacking import reward_functions
-from rgb_stacking import task
+from . import physics_utils
+from . import reward_functions
+from . import task
 
 # Heights above basket surface between which shaping for Lift will be computed.
 _LIFT_Z_MAX_ABOVE_BASKET = 0.1

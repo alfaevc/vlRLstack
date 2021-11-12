@@ -39,9 +39,9 @@ from dm_robotics.moma import subtask_env_builder
 from dm_robotics.moma.utils import mujoco_collisions
 import numpy as np
 
-from rgb_stacking import reward_functions
-from rgb_stacking import stack_rewards
-from rgb_stacking import task
+from . import reward_functions
+from . import stack_rewards
+from . import task
 
 
 # The environments provides stacked observations to the agent. The data of the

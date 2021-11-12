@@ -4,7 +4,7 @@ from absl import app
 from dm_control import viewer
 from dm_robotics.moma import action_spaces
 
-from rgb_stacking.rgb_stacking import environment
+from rgb_stack.rgb_stacking import environment
 
 import numpy as np
 
