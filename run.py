@@ -8,15 +8,15 @@ from rgb_stack.rgb_stacking import environment
 
 import numpy as np
 
-import rlkit.rlkit.torch.pytorch_util as ptu
-from rlkit.rlkit.data_management.env_replay_buffer import EnvReplayBuffer
-from rlkit.rlkit.envs.wrappers import NormalizedBoxEnv
-from rlkit.rlkit.launchers.launcher_util import setup_logger
-from rlkit.rlkit.samplers.data_collector import MdpPathCollector
-from rlkit.rlkit.torch.sac.policies import GaussianCNNPolicy, TanhCNNGaussianPolicy, MakeDeterministic
-from rlkit.rlkit.torch.sac.sac import SACTrainer
-from rlkit.rlkit.torch.networks.pretrained_cnn import PretrainedCNN
-from rlkit.rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
+import rlkit.torch.pytorch_util as ptu
+from rlkit.data_management.env_replay_buffer import EnvReplayBuffer
+from rlkit.envs.wrappers import NormalizedBoxEnv
+from rlkit.launchers.launcher_util import setup_logger
+from rlkit.samplers.data_collector import MdpPathCollector
+from rlkit.torch.sac.policies import GaussianCNNPolicy, TanhCNNGaussianPolicy, MakeDeterministic
+from rlkit.torch.sac.sac import SACTrainer
+from rlkit.torch.networks.pretrained_cnn import PretrainedCNN
+from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
 import itertools
 
