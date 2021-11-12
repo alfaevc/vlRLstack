@@ -13,7 +13,7 @@ from rlkit.rlkit.data_management.env_replay_buffer import EnvReplayBuffer
 from rlkit.rlkit.envs.wrappers import NormalizedBoxEnv
 from rlkit.rlkit.launchers.launcher_util import setup_logger
 from rlkit.rlkit.samplers.data_collector import MdpPathCollector
-from rlkit.rlkit.torch.sac.policies import TanhGaussianPolicy, MakeDeterministic
+from rlkit.rlkit.torch.sac.policies import GaussianCNNPolicy, TanhCNNGaussianPolicy, MakeDeterministic
 from rlkit.rlkit.torch.sac.sac import SACTrainer
 from rlkit.rlkit.torch.networks.pretrained_cnn import PretrainedCNN
 from rlkit.rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
@@ -24,7 +24,13 @@ def experiment(variant):
     eval_env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
     #obs_dim = expl_env.observation_space.low.size
     #action_dim = eval_env.action_space.low.size
+    kernel_size = 3
+    n_channels = 5
+    strides = 1
+    paddings = "same"
+
     step_type, reward, discount, obs = expl_env.reset()
+    action_dim = 5
     state = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
 
     M = variant['layer_size']
@@ -56,10 +62,18 @@ def experiment(variant):
         output_size = 1,
         hidden_sizes=[M, M],
     )
-    policy = TanhGaussianPolicy(
-        obs_dim=obs_dim,
+    policy = GaussianCNNPolicy(
+        obs_dim=1,
         action_dim=action_dim,
         hidden_sizes=[M, M],
+        kwargs = {'input_width': state.shape[0],
+        'input_height': state.shape[1],
+        'input_channels': state.shape[2],
+        'output_size': action_dim,
+        'kernel_sizes': kernel_size,
+        'n_channels': n_channels,
+        'strides': strides,
+        'paddings': paddings},
     )
     eval_policy = MakeDeterministic(policy)
     eval_path_collector = MdpPathCollector(
