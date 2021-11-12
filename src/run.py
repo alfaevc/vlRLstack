@@ -18,16 +18,18 @@ from rlkit.rlkit.torch.sac.sac import SACTrainer
 from rlkit.rlkit.torch.networks.pretrained_cnn import PretrainedCNN
 from rlkit.rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
+import itertools
+
 
 def experiment(variant):
     expl_env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
     eval_env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
     #obs_dim = expl_env.observation_space.low.size
     #action_dim = eval_env.action_space.low.size
-    kernel_size = 3
-    n_channels = 5
-    strides = 1
-    paddings = "same"
+    kernel_size = itertools.repeat(3, 1)
+    n_channels = itertools.repeat(5, 1)
+    strides = itertools.repeat(1, 1)
+    paddings = itertools.repeat("same", 1)
 
     step_type, reward, discount, obs = expl_env.reset()
     action_dim = 5
