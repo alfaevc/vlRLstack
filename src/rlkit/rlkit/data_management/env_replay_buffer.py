@@ -1,6 +1,9 @@
 from gym.spaces import Discrete
 
-from simple_replay_buffer import SimpleReplayBuffer
+# import simple_replay_buffer.SimpleReplayBuffer as SimpleReplayBuffer
+# import simple_replay_buffer
+from . import *
+from .simple_replay_buffer import SimpleReplayBuffer
 from envs.env_utils import get_dim
 import numpy as np
 
