@@ -39,6 +39,9 @@ def main(argv: Sequence[str]) -> None:
     print("shape of the state", state.shape)
     
     _, next_reward, _, next_obs = env.step(action)
+    step_type, next_reward, discount, obs = env.step(action)
+    ## 
+
     for i in next_obs:
         print("The dimension of {0} is {1}.".format(i, obs[i].shape))
 
