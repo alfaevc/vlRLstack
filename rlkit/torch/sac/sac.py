@@ -18,6 +18,7 @@ SACLosses = namedtuple(
     'policy_loss qf1_loss qf2_loss alpha_loss',
 )
 
+
 class SACTrainer(TorchTrainer, LossFunction):
     def __init__(
             self,
@@ -57,8 +58,8 @@ class SACTrainer(TorchTrainer, LossFunction):
         if self.use_automatic_entropy_tuning:
             if target_entropy is None:
                 # Use heuristic value from SAC paper
-                self.target_entropy = -np.prod(
-                    self.env.action_space.shape).item()
+                # self.target_entropy = -np.prod(self.env.action_space.shape).item()
+                self.target_entropy = -5
             else:
                 self.target_entropy = target_entropy
             self.log_alpha = ptu.zeros(1, requires_grad=True)
@@ -157,7 +158,8 @@ class SACTrainer(TorchTrainer, LossFunction):
         new_obs_actions, log_pi = dist.rsample_and_logprob()
         log_pi = log_pi.unsqueeze(-1)
         if self.use_automatic_entropy_tuning:
-            alpha_loss = -(self.log_alpha * (log_pi + self.target_entropy).detach()).mean()
+            alpha_loss = -(self.log_alpha * (log_pi +
+                           self.target_entropy).detach()).mean()
             alpha = self.log_alpha.exp()
         else:
             alpha_loss = 0
@@ -182,7 +184,8 @@ class SACTrainer(TorchTrainer, LossFunction):
             self.target_qf2(next_obs, new_next_actions),
         ) - alpha * new_log_pi
 
-        q_target = self.reward_scale * rewards + (1. - terminals) * self.discount * target_q_values
+        q_target = self.reward_scale * rewards + \
+            (1. - terminals) * self.discount * target_q_values
         qf1_loss = self.qf_criterion(q1_pred, q_target.detach())
         qf2_loss = self.qf_criterion(q2_pred, q_target.detach())
 
