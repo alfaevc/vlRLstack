@@ -1,5 +1,6 @@
+from absl import app, flags
 from typing import Sequence
-
+import sys
 from absl import app
 from dm_control import viewer
 from dm_robotics.moma import action_spaces
@@ -20,62 +21,74 @@ from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
 import itertools
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+
+# flags.DEFINE_string("debug_specs", None, "NONE")
+
 
 def experiment(variant):
-    expl_env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
-    eval_env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
+    expl_env = environment.rgb_stacking(
+        observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
+    eval_env = environment.rgb_stacking(
+        observation_set=environment.ObservationSet.VISION_ONLY, object_triplet='rgb_test_triplet1')
     #obs_dim = expl_env.observation_space.low.size
     #action_dim = eval_env.action_space.low.size
-    kernel_size = itertools.repeat(3, 1)
-    n_channels = itertools.repeat(5, 1)
-    strides = itertools.repeat(1, 1)
-    paddings = itertools.repeat("same", 1)
+    n_layers = 1
+    kernel_size = list(itertools.repeat(3, n_layers))
+    n_channels = list(itertools.repeat(5, n_layers))
+    strides = list(itertools.repeat(1, n_layers))
+    paddings = list(itertools.repeat("same", n_layers))
 
-    step_type, reward, discount, obs = expl_env.reset()
+    step_type, reward, discount, obs = expl_env.reset() # throws an error..?????
     action_dim = 5
-    state = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
+    # state = np.concatenate(
+    #     (obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
+
+    state_shape = (128, 256, 3)
 
     M = variant['layer_size']
     qf1 = PretrainedCNN(
-        input_width = state.shape[0],
-        input_height = state.shape[1],
-        input_channels = state.shape[2],
-        output_size = 1,
+        input_width=state_shape[0],
+        input_height=state_shape[1],
+        input_channels=state_shape[2],
+        output_size=1,
         hidden_sizes=[M, M],
     )
     qf2 = PretrainedCNN(
-        input_width = state.shape[0],
-        input_height = state.shape[1],
-        input_channels = state.shape[2],
-        output_size = 1,
+        input_width=state_shape[0],
+        input_height=state_shape[1],
+        input_channels=state_shape[2],
+        output_size=1,
         hidden_sizes=[M, M],
     )
     target_qf1 = PretrainedCNN(
-        input_width = state.shape[0],
-        input_height = state.shape[1],
-        input_channels = state.shape[2],
-        output_size = 1,
+        input_width=state_shape[0],
+        input_height=state_shape[1],
+        input_channels=state_shape[2],
+        output_size=1,
         hidden_sizes=[M, M],
     )
     target_qf2 = PretrainedCNN(
-        input_width = state.shape[0],
-        input_height = state.shape[1],
-        input_channels = state.shape[2],
-        output_size = 1,
+        input_width=state_shape[0],
+        input_height=state_shape[1],
+        input_channels=state_shape[2],
+        output_size=1,
         hidden_sizes=[M, M],
     )
     policy = GaussianCNNPolicy(
         obs_dim=1,
         action_dim=action_dim,
         hidden_sizes=[M, M],
-        kwargs = {'input_width': state.shape[0],
-        'input_height': state.shape[1],
-        'input_channels': state.shape[2],
-        'output_size': action_dim,
-        'kernel_sizes': kernel_size,
-        'n_channels': n_channels,
-        'strides': strides,
-        'paddings': paddings},
+        **{'input_width': state_shape[0],
+                'input_height': state_shape[1],
+                'input_channels': state_shape[2],
+                'output_size': action_dim,
+                'kernel_sizes': kernel_size,
+                'n_channels': n_channels,
+                'strides': strides,
+                'paddings': paddings},
     )
     eval_policy = MakeDeterministic(policy)
     eval_path_collector = MdpPathCollector(
@@ -115,10 +128,7 @@ def experiment(variant):
     eval_env.close()
 
 
-
-
-
-if __name__ == "__main__":
+def main():
     # noinspection PyTypeChecker
     variant = dict(
         algorithm="SAC",
@@ -145,9 +155,10 @@ if __name__ == "__main__":
         ),
     )
     setup_logger('name-of-experiment', variant=variant)
-    # ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
+    ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
     experiment(variant)
-
 
     # Launch the viewer application.
     # viewer.launch(env)
+
+main()

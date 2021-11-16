@@ -211,7 +211,7 @@ class GaussianCNNPolicy(CNN, TorchStochasticPolicy):
     ):
         super().__init__(
             hidden_sizes=hidden_sizes,
-            output_size=action_dim,
+            # output_size=action_dim,
             init_w=init_w,
             output_activation=torch.tanh,
             **kwargs
