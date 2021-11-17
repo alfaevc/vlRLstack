@@ -120,11 +120,7 @@ def rollout(
         next_o = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
         # done = True if np.isclose(discount, 1) else False
         # we have to set time limit stuffs, and determine if task is finished
-<<<<<<< HEAD
-        # if step_type not in [StepType.MID, StepType.FIRST]:
-=======
         # if step_type not in ["StepType.MID", "StepType.FIRST"]:
->>>>>>> ztan
         #     print(step_type, type(step_type), path_length)
         if render:
             env.render(**render_kwargs)
@@ -158,12 +154,8 @@ def rollout(
     rewards = np.array(rewards)
     if len(rewards.shape) == 1:
         rewards = rewards.reshape(-1, 1)
-<<<<<<< HEAD
-    print(len(observations))
-=======
 
     print(path_length)
->>>>>>> ztan
     return dict(
         observations=observations,
         actions=actions,
