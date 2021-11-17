@@ -144,7 +144,8 @@ class CNN(PyTorchModule):
         # reshape from batch of flattened images into (channels, w, h) 
 
         # originally they have flattened images; this is wierd. We dont have that
-        conv_input = input
+        conv_input = input.contiguous()
+
         h = conv_input.view(conv_input.shape[0],
                             self.input_channels,
                             self.input_height,
@@ -166,6 +167,9 @@ class CNN(PyTorchModule):
             h = torch.cat((h, extra_fc_input), dim=1)
         h = self.apply_forward_fc(h)
 
+        if not isinstance(return_last_activations, bool):
+            print(f"return_last_activations: {type(return_last_activations)}, {return_last_activations}")
+            return h
         if return_last_activations:
             return h
         return self.output_activation(self.last_fc(h))

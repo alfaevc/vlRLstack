@@ -42,6 +42,24 @@ class ReplayBuffer(object, metaclass=abc.ABCMeta):
 
         :param path: Dict like one outputted by rlkit.samplers.util.rollout
         """
+        
+        generator = zip(
+            path["observations"],
+            path["actions"],
+            path["rewards"],
+            path["next_observations"],
+            path["terminals"],
+            path["agent_infos"],
+            path["env_infos"],
+        )
+        # print(f"len(path): {len(path)}; len(generator): {len(enumerate(generator))}")
+        print([[k, type(v)] for k,v in path.items()])
+        for (k, v) in path.items():
+            if isinstance(v, list):
+                print(k, len(v))
+            else:
+                print(k, v.shape)
+                
         for i, (
                 obs,
                 action,
@@ -50,15 +68,8 @@ class ReplayBuffer(object, metaclass=abc.ABCMeta):
                 terminal,
                 agent_info,
                 env_info
-        ) in enumerate(zip(
-            path["observations"],
-            path["actions"],
-            path["rewards"],
-            path["next_observations"],
-            path["terminals"],
-            path["agent_infos"],
-            path["env_infos"],
-        )):
+        ) in enumerate(generator):
+            j = i
             self.add_sample(
                 observation=obs,
                 action=action,
@@ -68,6 +79,7 @@ class ReplayBuffer(object, metaclass=abc.ABCMeta):
                 agent_info=agent_info,
                 env_info=env_info,
             )
+        print(f"len(path): {j}")
         self.terminate_episode()
 
     def add_paths(self, paths):

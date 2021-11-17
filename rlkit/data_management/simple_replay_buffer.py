@@ -16,14 +16,15 @@ class SimpleReplayBuffer(ReplayBuffer):
         env_info_sizes,
         replace = True,
     ):
-        self._observation_dim = observation_dim
+        # self._observation_dim = observation_dim
+        self._observation_dim = [128, 256, 3]
         self._action_dim = action_dim
         self._max_replay_buffer_size = max_replay_buffer_size
-        self._observations = np.zeros((max_replay_buffer_size, observation_dim))
+        self._observations = np.zeros((max_replay_buffer_size, *self._observation_dim ))
         # It's a bit memory inefficient to save the observations twice,
         # but it makes the code *much* easier since you no longer have to
         # worry about termination conditions.
-        self._next_obs = np.zeros((max_replay_buffer_size, observation_dim))
+        self._next_obs = np.zeros((max_replay_buffer_size, *self._observation_dim ))
         self._actions = np.zeros((max_replay_buffer_size, action_dim))
         # Make everything a 2D np array to make it easier for other code to
         # reason about the shape of the data
@@ -42,8 +43,13 @@ class SimpleReplayBuffer(ReplayBuffer):
         self._top = 0
         self._size = 0
 
+        print(f"self._observations.shape {self._observations.shape}")
+
     def add_sample(self, observation, action, reward, next_observation,
                    terminal, env_info, **kwargs):
+        # if len(observation.shape) > 1:
+        #     observation = observation.reshape(-1)
+
         self._observations[self._top] = observation
         self._actions[self._top] = action
         self._rewards[self._top] = reward
@@ -52,6 +58,8 @@ class SimpleReplayBuffer(ReplayBuffer):
 
         for key in self._env_info_keys:
             self._env_infos[key][self._top] = env_info[key]
+
+        # print(f"self._size: {self._size}") # is it ever called???
         self._advance()
 
     def terminate_episode(self):
@@ -69,6 +77,7 @@ class SimpleReplayBuffer(ReplayBuffer):
             self._size += 1
 
     def random_batch(self, batch_size):
+        print(f"self._size {self._size}; batch_size {batch_size}")
         indices = np.random.choice(self._size, size=batch_size, replace=self._replace or self._size < batch_size)
         if not self._replace and self._size < batch_size:
             warnings.warn('Replace was set to false, but is temporarily set to true because batch size is larger than current size of replay.')

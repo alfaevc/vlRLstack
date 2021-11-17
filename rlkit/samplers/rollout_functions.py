@@ -137,7 +137,8 @@ def rollout(
         next_observations.append(next_o)
         raw_next_obs.append(next_o)
         agent_infos.append(agent_info)
-        # env_infos.append(env_info) # we dont have this ...
+        env_info = "Fine..."
+        env_infos.append(env_info) # we dont have this ...
         path_length += 1
         if done:
             # print(path_length)
@@ -155,7 +156,7 @@ def rollout(
     if len(rewards.shape) == 1:
         rewards = rewards.reshape(-1, 1)
 
-    print(path_length)
+    # print(path_length)
     return dict(
         observations=observations,
         actions=actions,
@@ -234,6 +235,7 @@ def deprecated_rollout(
             np.expand_dims(next_o, 0)
         )
     )
+    print(path_length)
     return dict(
         observations=observations,
         actions=actions,

@@ -55,12 +55,13 @@ class MdpPathCollector(PathCollector):
                 render_kwargs=self._render_kwargs,
             )
             path_len = len(path['actions'])
-            if (
-                    path_len != max_path_length
-                    and not path['dones'][-1]
-                    and discard_incomplete_paths
-            ):
-                break
+            # print(f"path_len collected: {path_len}") # is consistent ... ?!
+            # if (
+            #         path_len != max_path_length
+            #         and not path['dones'][-1]
+            #         and discard_incomplete_paths
+            # ):
+            #     break
             num_steps_collected += path_len
             paths.append(path)
         self._num_paths_total += len(paths)

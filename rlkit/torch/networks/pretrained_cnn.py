@@ -87,9 +87,11 @@ class PretrainedCNN(PyTorchModule):
             self.last_fc.bias.data.uniform_(-init_w, init_w)
 
     def forward(self, input, return_last_activations=False):
-        conv_input = input.narrow(start=0,
-                                  length=self.conv_input_length,
-                                  dim=1).contiguous()
+        # conv_input = input.narrow(start=0,
+        #                           length=self.conv_input_length,
+        #                           dim=1).contiguous()
+
+        conv_input = input.contiguous()
         # reshape from batch of flattened images into (channels, w, h)
         h = conv_input.view(conv_input.shape[0],
                             self.input_channels,
@@ -111,7 +113,10 @@ class PretrainedCNN(PyTorchModule):
             )
             h = torch.cat((h, extra_fc_input), dim=1)
         h = self.apply_forward_fc(h)
-
+        
+        if not isinstance(return_last_activations, bool):
+            print(f"return_last_activations: {type(return_last_activations)}, {return_last_activations}")
+            return h
         if return_last_activations:
             return h
         return self.output_activation(self.last_fc(h))
