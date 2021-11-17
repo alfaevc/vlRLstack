@@ -41,6 +41,9 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
 
         self.post_epoch_funcs = []
 
+        # try this
+        logger.save_itr_params(-1, self._get_snapshot())
+
     def train(self, start_epoch=0):
         self._start_epoch = start_epoch
         self._train()
@@ -70,14 +73,17 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
 
     def _get_snapshot(self):
         snapshot = {}
+        # for k, v in self.trainer.get_snapshot().items():
+        #     snapshot['trainer/' + k] = v
         for k, v in self.trainer.get_snapshot().items():
-            snapshot['trainer/' + k] = v
-        for k, v in self.expl_data_collector.get_snapshot().items():
-            snapshot['exploration/' + k] = v
-        for k, v in self.eval_data_collector.get_snapshot().items():
-            snapshot['evaluation/' + k] = v
-        for k, v in self.replay_buffer.get_snapshot().items():
-            snapshot['replay_buffer/' + k] = v
+            snapshot[k] = v
+        # what about this
+        # for k, v in self.expl_data_collector.get_snapshot().items():
+        #     snapshot['exploration/' + k] = v
+        # for k, v in self.eval_data_collector.get_snapshot().items():
+        #     snapshot['evaluation/' + k] = v
+        # for k, v in self.replay_buffer.get_snapshot().items():
+        #     snapshot['replay_buffer/' + k] = v
         return snapshot
 
     def _log_stats(self, epoch):
@@ -100,37 +106,37 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         """
         Exploration
         """
-        logger.record_dict(
-            self.expl_data_collector.get_diagnostics(),
-            prefix='expl/'
-        )
-        expl_paths = self.expl_data_collector.get_epoch_paths()
-        if hasattr(self.expl_env, 'get_diagnostics'):
-            logger.record_dict(
-                self.expl_env.get_diagnostics(expl_paths),
-                prefix='expl/',
-            )
-        logger.record_dict(
-            eval_util.get_generic_path_information(expl_paths),
-            prefix="expl/",
-        )
-        """
-        Evaluation
-        """
-        logger.record_dict(
-            self.eval_data_collector.get_diagnostics(),
-            prefix='eval/',
-        )
-        eval_paths = self.eval_data_collector.get_epoch_paths()
-        if hasattr(self.eval_env, 'get_diagnostics'):
-            logger.record_dict(
-                self.eval_env.get_diagnostics(eval_paths),
-                prefix='eval/',
-            )
-        logger.record_dict(
-            eval_util.get_generic_path_information(eval_paths),
-            prefix="eval/",
-        )
+        # logger.record_dict(
+        #     self.expl_data_collector.get_diagnostics(),
+        #     prefix='expl/'
+        # )
+        # expl_paths = self.expl_data_collector.get_epoch_paths()
+        # if hasattr(self.expl_env, 'get_diagnostics'):
+        #     logger.record_dict(
+        #         self.expl_env.get_diagnostics(expl_paths),
+        #         prefix='expl/',
+        #     )
+        # logger.record_dict(
+        #     eval_util.get_generic_path_information(expl_paths),
+        #     prefix="expl/",
+        # )
+        # """
+        # Evaluation
+        # """
+        # logger.record_dict(
+        #     self.eval_data_collector.get_diagnostics(),
+        #     prefix='eval/',
+        # )
+        # eval_paths = self.eval_data_collector.get_epoch_paths()
+        # if hasattr(self.eval_env, 'get_diagnostics'):
+        #     logger.record_dict(
+        #         self.eval_env.get_diagnostics(eval_paths),
+        #         prefix='eval/',
+        #     )
+        # logger.record_dict(
+        #     eval_util.get_generic_path_information(eval_paths),
+        #     prefix="eval/",
+        # )
 
         """
         Misc

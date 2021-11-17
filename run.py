@@ -150,7 +150,7 @@ def main():
             num_expl_steps_per_train_loop=400,
             min_num_steps_before_training=400,
             max_path_length=400,
-            batch_size=1,
+            batch_size=4,
         ),
         trainer_kwargs=dict(
             discount=0.99,
