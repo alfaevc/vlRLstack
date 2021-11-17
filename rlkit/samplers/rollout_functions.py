@@ -98,7 +98,9 @@ def rollout(
     next_observations = []
     path_length = 0
     agent.reset()
-    o = env.reset() ###see this o = env.reset()
+    step_type, reward, discount, obs = env.reset() ###see this o = env.reset()
+    o = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
+    done = False
     if reset_callback:
         reset_callback(env, agent, o)
     if render:
@@ -106,12 +108,19 @@ def rollout(
     while path_length < max_path_length:
         raw_obs.append(o)
         o_for_agent = preprocess_obs_for_policy_fn(o)
+        # print(o.shape, o_for_agent.shape)
         a, agent_info = agent.get_action(o_for_agent, **get_action_kwargs)
 
         if full_o_postprocess_func:
             full_o_postprocess_func(env, agent, o)
 
-        next_o, r, done, env_info = env.step(copy.deepcopy(a))
+        # next_o, r, done, env_info = env.step(copy.deepcopy(a))
+        step_type, r, discount, next_obs = env.step(copy.deepcopy(a))
+        next_o = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
+        done = True if np.isclose(discount, 1) else False
+        # we have to set time limit stuffs, and determine if task is finished
+        if step_type not in ["StepType.MID", "StepType.FIRST"]:
+            print(step_type, type(step_type), path_length)
         if render:
             env.render(**render_kwargs)
         observations.append(o)
@@ -119,15 +128,15 @@ def rollout(
         terminal = False
         if done:
             # terminal=False if TimeLimit caused termination
-            if not env_info.pop('TimeLimit.truncated', False):
-                terminal = True
+            # if not env_info.pop('TimeLimit.truncated', False):
+            terminal = True
         terminals.append(terminal)
         dones.append(done)
         actions.append(a)
         next_observations.append(next_o)
         raw_next_obs.append(next_o)
         agent_infos.append(agent_info)
-        env_infos.append(env_info)
+        # env_infos.append(env_info) # we dont have this ...
         path_length += 1
         if done:
             break

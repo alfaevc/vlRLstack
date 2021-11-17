@@ -137,10 +137,14 @@ class CNN(PyTorchModule):
             self.last_fc.bias.data.uniform_(-init_w, init_w)
 
     def forward(self, input, return_last_activations=False):
-        conv_input = input.narrow(start=0,
-                                  length=self.conv_input_length,
-                                  dim=1).contiguous()
-        # reshape from batch of flattened images into (channels, w, h)
+        # print(f"input.shape: {input.shape}, self.conv_input_length: {self.conv_input_length}")
+        # conv_input = input.narrow(start=0,
+        #                           length=self.conv_input_length,
+        #                           dim=1).contiguous()
+        # reshape from batch of flattened images into (channels, w, h) 
+
+        # originally they have flattened images; this is wierd. We dont have that
+        conv_input = input
         h = conv_input.view(conv_input.shape[0],
                             self.input_channels,
                             self.input_height,

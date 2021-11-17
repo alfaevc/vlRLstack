@@ -249,6 +249,8 @@ class GaussianCNNPolicy(CNN, TorchStochasticPolicy):
                 log_std = torch.sigmoid(self.log_std_logits)
             else:
                 raise ValueError(self.std_architecture)
+
+            # print(obs)
             log_std = self.min_log_std + log_std * (
                         self.max_log_std - self.min_log_std)
             std = torch.exp(log_std)

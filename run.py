@@ -81,6 +81,8 @@ def experiment(variant):
         obs_dim=1,
         action_dim=action_dim,
         hidden_sizes=[M, M],
+        min_log_std=-20,
+        max_log_std=2,
         **{'input_width': state_shape[0],
                 'input_height': state_shape[1],
                 'input_channels': state_shape[2],

@@ -28,6 +28,7 @@ def main(argv: Sequence[str]) -> None:
     something()
     
     step_type, reward, discount, obs = env.reset()
+    print(step_type, reward, discount)
     for i in obs:
         print("The dimension of {0} is {1}.".format(i, obs[i].shape))
 
@@ -39,11 +40,20 @@ def main(argv: Sequence[str]) -> None:
     print("shape of the state", state.shape)
     
     _, next_reward, _, next_obs = env.step(action)
-    step_type, next_reward, discount, obs = env.step(action)
+    # step_type, next_reward, discount, obs = env.step(action)
     ## 
 
     for i in next_obs:
         print("The dimension of {0} is {1}.".format(i, obs[i].shape))
+
+
+    for _ in range(400):
+        env.step(action)
+
+    step_type, next_reward, discount, obs = env.step(action)
+    print(step_type, next_reward, discount)
+    for k,v in obs.items():
+        print(k, v.shape)
 
     # Launch the viewer application.
     # viewer.launch(env)
