@@ -117,10 +117,10 @@ def rollout(
         # next_o, r, done, env_info = env.step(copy.deepcopy(a))
         step_type, r, discount, next_obs = env.step(copy.deepcopy(a))
         next_o = np.concatenate((obs["basket_front_left/pixels"], obs["basket_front_right/pixels"]), axis=1)
-        done = True if np.isclose(discount, 1) else False
+        # done = True if np.isclose(discount, 1) else False
         # we have to set time limit stuffs, and determine if task is finished
-        if step_type not in ["StepType.MID", "StepType.FIRST"]:
-            print(step_type, type(step_type), path_length)
+        # if step_type not in [StepType.MID, StepType.FIRST]:
+        #     print(step_type, type(step_type), path_length)
         if render:
             env.render(**render_kwargs)
         observations.append(o)
@@ -139,6 +139,7 @@ def rollout(
         # env_infos.append(env_info) # we dont have this ...
         path_length += 1
         if done:
+            # print(path_length)
             break
         o = next_o
     actions = np.array(actions)
@@ -152,6 +153,7 @@ def rollout(
     rewards = np.array(rewards)
     if len(rewards.shape) == 1:
         rewards = rewards.reshape(-1, 1)
+    print(len(observations))
     return dict(
         observations=observations,
         actions=actions,
