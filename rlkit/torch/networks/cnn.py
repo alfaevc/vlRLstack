@@ -168,7 +168,7 @@ class CNN(PyTorchModule):
         h = self.apply_forward_fc(h)
 
         if not isinstance(return_last_activations, bool):
-            print(f"return_last_activations: {type(return_last_activations)}, {return_last_activations}")
+            print(f"return_last_activations: {type(return_last_activations)}, {return_last_activations.shape}")
             return h
         if return_last_activations:
             return h

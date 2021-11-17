@@ -26,7 +26,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 # flags.DEFINE_string("debug_specs", None, "NONE")
-
+from torchinfo import summary
 
 def experiment(variant):
     expl_env = environment.rgb_stacking(
@@ -56,6 +56,7 @@ def experiment(variant):
         output_size=1,
         hidden_sizes=[M, M],
     )
+    summary(qf1)
     qf2 = PretrainedCNN(
         input_width=state_shape[0],
         input_height=state_shape[1],
@@ -63,6 +64,7 @@ def experiment(variant):
         output_size=1,
         hidden_sizes=[M, M],
     )
+    summary(qf2)
     target_qf1 = PretrainedCNN(
         input_width=state_shape[0],
         input_height=state_shape[1],
@@ -70,6 +72,7 @@ def experiment(variant):
         output_size=1,
         hidden_sizes=[M, M],
     )
+    summary(target_qf1)
     target_qf2 = PretrainedCNN(
         input_width=state_shape[0],
         input_height=state_shape[1],
@@ -77,6 +80,7 @@ def experiment(variant):
         output_size=1,
         hidden_sizes=[M, M],
     )
+    summary(target_qf2)
     policy = GaussianCNNPolicy(
         obs_dim=1,
         action_dim=action_dim,
@@ -92,6 +96,8 @@ def experiment(variant):
                 'strides': strides,
                 'paddings': paddings},
     )
+    summary(policy)
+
     eval_policy = MakeDeterministic(policy)
     eval_path_collector = MdpPathCollector(
         eval_env,
@@ -144,7 +150,7 @@ def main():
             num_expl_steps_per_train_loop=400,
             min_num_steps_before_training=400,
             max_path_length=400,
-            batch_size=256,
+            batch_size=1,
         ),
         trainer_kwargs=dict(
             discount=0.99,
