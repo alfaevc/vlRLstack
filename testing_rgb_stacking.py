@@ -25,6 +25,25 @@ from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 import torch
 import torchvision.models as models
 
+from absl import app, flags
+from typing import Sequence
+import sys
+from absl import app
+from dm_control import viewer
+from dm_robotics.moma import action_spaces
+
+
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+import dmc2gym
+from gym import core, spaces
+from dm_control import suite
+from dm_env import specs
+import numpy as np
+from rgb_stacking import environment
+
 ptu.set_gpu_mode(True)
 
 variant = dict(
@@ -33,13 +52,17 @@ variant = dict(
     layer_size=256,
     replay_buffer_size=int(2e4),
     algorithm_kwargs=dict(
-        num_epochs=666,
-        num_eval_steps_per_epoch=500,
-        num_trains_per_train_loop=100,
-        num_expl_steps_per_train_loop=100,
-        min_num_steps_before_training=100,
-        max_path_length=1000,
-        batch_size=16,
+        num_epochs=int(1e6),
+        # num_eval_steps_per_epoch=2000,
+        # num_trains_per_train_loop=2000,
+        # num_expl_steps_per_train_loop=2000,
+        # min_num_steps_before_training=2000,
+        num_eval_steps_per_epoch=4,
+        num_trains_per_train_loop=4,
+        num_expl_steps_per_train_loop=4,
+        min_num_steps_before_training=4,
+        max_path_length=400,
+        batch_size=12,
     ),
     trainer_kwargs=dict(
         discount=0.99,
@@ -52,8 +75,8 @@ variant = dict(
     ),
 )
 
-expl_env = NormalizedBoxEnv(CarRacing())
-eval_env = NormalizedBoxEnv(CarRacing())
+expl_env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
+eval_env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
 obs_dim = expl_env.observation_space.low.size
 action_dim = eval_env.action_space.low.size
 M = variant["layer_size"]
@@ -153,6 +176,8 @@ policy = GaussianCNNPolicy(
     },
 )
 
+# now: also use pretrainedCNN 
+
 # self.conv_output_flat_size: 1280 is the CNN output (effnet for example!)
 eval_policy = MakeDeterministic(policy)
 eval_path_collector = MdpPathCollector(eval_env, eval_policy,)
@@ -178,6 +203,6 @@ algorithm = TorchBatchRLAlgorithm(
     **variant["algorithm_kwargs"]
 )
 
-setup_logger("carRace_testing", variant=variant)
+setup_logger("rgb_stacking", variant=variant)
 algorithm.to(ptu.device)
 algorithm.train()

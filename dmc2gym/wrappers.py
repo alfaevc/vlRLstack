@@ -4,20 +4,18 @@ from dm_env import specs
 import numpy as np
 
 from rgb_stacking import environment
-
+import cv2
 
 def _spec_to_box(spec):
     def extract_min_max(s):
         # assert s.dtype == np.float64 or s.dtype == np.float32
         dim = np.int(np.prod(s.shape))
-        zeros = np.zeros(dim, dtype=np.float32)
-        return s.minimum + zeros, s.maximum + zeros
-        # if type(s) == specs.Array:
-        #     bound = np.inf * np.ones(dim, dtype=np.float32)
-        #     return -bound, bound
-        # elif type(s) == specs.BoundedArray:
-        #     zeros = np.zeros(dim, dtype=np.float32)
-        #     return s.minimum + zeros, s.maximum + zeros
+        if type(s) == specs.Array:
+            bound = np.inf * np.ones(dim, dtype=np.float32)
+            return -bound, bound
+        elif type(s) == specs.BoundedArray:
+            zeros = np.zeros(dim, dtype=np.float32)
+            return s.minimum + zeros, s.maximum + zeros
 
     mins, maxs = [], []
     for s in spec:
@@ -42,7 +40,7 @@ class DMCWrapper(core.Env):
     def __init__(
         self,
         domain_name="rgb_stacking",
-        task_name='rgb_test_triplet1',
+        task_name="rgb_test_triplet1",
         task_kwargs=None,
         visualize_reward={},
         from_pixels=False,
@@ -51,9 +49,11 @@ class DMCWrapper(core.Env):
         camera_id=0,
         frame_skip=1,
         environment_kwargs=None,
-        channels_first=True
+        channels_first=False,
     ):
-        assert 'random' in task_kwargs, 'please specify a seed, for deterministic behaviour'
+        assert (
+            "random" in task_kwargs
+        ), "please specify a seed, for deterministic behaviour"
         self._from_pixels = from_pixels
         self._height = height
         self._width = width
@@ -61,34 +61,36 @@ class DMCWrapper(core.Env):
         self._frame_skip = frame_skip
         self._channels_first = channels_first
         self._using_rgb_stacking = False
+
         
         # create task
         if domain_name == "rgb_stacking":
             self._using_rgb_stacking = True
-            self._env = environment.rgb_stacking(observation_set=environment.ObservationSet.VISION_ONLY, object_triplet=task_name)
+            print(f"self._using_rgb_stacking {self._using_rgb_stacking}")
+            self._env = environment.rgb_stacking(
+                observation_set=environment.ObservationSet.VISION_ONLY,
+                object_triplet=task_name,
+            )
         else:
             self._env = suite.load(
                 domain_name=domain_name,
                 task_name=task_name,
                 task_kwargs=task_kwargs,
                 visualize_reward=visualize_reward,
-                environment_kwargs=environment_kwargs
+                environment_kwargs=environment_kwargs,
             )
 
         # true and normalized action spaces
         self._true_action_space = _spec_to_box([self._env.action_spec()])
         self._norm_action_space = spaces.Box(
-            low=-1.0,
-            high=1.0,
-            shape=self._true_action_space.shape,
-            dtype=np.float32
+            low=-1.0, high=1.0, shape=self._true_action_space.shape, dtype=np.float32
         )
 
         # print("?????")
         # create observation space
-        
-        if self._using_rgb_stacking:
-            shape = [3, 256, 128] if channels_first else [256, 128, 3]
+
+        if self._using_rgb_stacking: # obs
+            shape = [128, 64, 3] # this WILL be used for indexing w,h,c. Reduce image size pls.
             self._observation_space = spaces.Box(
                 low=0, high=255, shape=shape, dtype=np.uint8
             )
@@ -101,33 +103,33 @@ class DMCWrapper(core.Env):
             self._observation_space = _spec_to_box(
                 self._env.observation_spec().values()
             )
+
         if self._using_rgb_stacking:
-            self._state_space = _spec_to_box(
-                    self._env.observation_spec().values()
-            )
-            
+            shape = [256, 128, 3]
+            self._state_space = spaces.Box(
+                low=0, high=255, shape=shape, dtype=np.uint8
+            ) # this will not be used for indexing h,w,c
         else:
-            self._state_space = _spec_to_box(
-                    self._env.observation_spec().values()
-            )
-            
+            self._state_space = _spec_to_box(self._env.observation_spec().values())
+
         self.current_state = None
 
         # set seed
-        self.seed(seed=task_kwargs.get('random', 1))
+        self.seed(seed=task_kwargs.get("random", 1))
 
     def __getattr__(self, name):
         return getattr(self._env, name)
 
     def _get_obs(self, time_step):
         if self._using_rgb_stacking:
-            obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
-            obs = _flatten_obs(time_step.observation)
+            # obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
+            # we hardcoded out the observations!
+            obs = np.concatenate(list(time_step.observation.values()), axis=1)
+            obs = cv2.resize(obs, dsize=(128, 64)).ravel()
+            # obs = _flatten_obs(obs)
         elif self._from_pixels:
             obs = self.render(
-                height=self._height,
-                width=self._width,
-                camera_id=self._camera_id
+                height=self._height, width=self._width, camera_id=self._camera_id
             )
             if self._channels_first:
                 obs = obs.transpose(2, 0, 1).copy()
@@ -166,7 +168,7 @@ class DMCWrapper(core.Env):
         action = self._convert_action(action)
         assert self._true_action_space.contains(action)
         reward = 0
-        extra = {'internal_state': self._env.physics.get_state().copy()}
+        extra = {"internal_state": self._env.physics.get_state().copy()}
 
         for _ in range(self._frame_skip):
             time_step = self._env.step(action)
@@ -176,7 +178,7 @@ class DMCWrapper(core.Env):
                 break
         obs = self._get_obs(time_step)
         self.current_state = _flatten_obs(time_step.observation)
-        extra['discount'] = time_step.discount
+        extra["discount"] = time_step.discount
         return obs, reward, done, extra
 
     def reset(self):
@@ -185,11 +187,9 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         return obs
 
-    def render(self, mode='rgb_array', height=None, width=None, camera_id=0):
-        assert mode == 'rgb_array', 'only support rgb_array mode, given %s' % mode
+    def render(self, mode="rgb_array", height=None, width=None, camera_id=0):
+        assert mode == "rgb_array", "only support rgb_array mode, given %s" % mode
         height = height or self._height
         width = width or self._width
         camera_id = camera_id or self._camera_id
-        return self._env.physics.render(
-            height=height, width=width, camera_id=camera_id
-        )
+        return self._env.physics.render(height=height, width=width, camera_id=camera_id)
