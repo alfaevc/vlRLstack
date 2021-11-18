@@ -1,3 +1,9 @@
+
+import os
+os.environ["LD_LIBRARY_PATH"] = ":/home/ztan/.mujoco/mujoco200/bin"
+os.environ.get("LD_LIBRARY_PATH", "")
+
+
 from gym.envs.mujoco import HalfCheetahEnv
 from gym.envs.box2d import CarRacing
 
