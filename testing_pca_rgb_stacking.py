@@ -82,14 +82,15 @@ def experiment(variant):
 
     # "size" will return the desired product of dimensions
 
-    (input_width,input_height,input_channels) = expl_env.observation_space.shape
+    #(input_width,input_height,input_channels) = expl_env.observation_space.shape
     n = 2
 
-    obs_dim = input_width
-    if input_width > input_height:
-        obs_dim = input_height
+    #obs_dim = input_width
+    #if input_width > input_height:
+    #    obs_dim = input_height
 
-    obs_dim *= n * 3
+    #obs_dim *= n * 3
+    obs_dim = 64 * n * 3
 
     qf1 = ConcatMlp(
         input_size=obs_dim + action_dim,

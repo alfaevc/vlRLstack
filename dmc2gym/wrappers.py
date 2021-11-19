@@ -117,10 +117,18 @@ class DMCWrapper(core.Env):
         # create observation space
 
         if self._using_rgb_stacking: # obs
+            '''
             shape = [128, 64, 3] # this WILL be used for indexing w,h,c. Reduce image size pls.
             self._observation_space = spaces.Box(
                  low=0, high=255, shape=shape, dtype=np.uint8
             )
+            '''
+            shape = (64*3*2,) # this WILL be used for indexing w,h,c. Reduce image size pls.
+            self._observation_space = spaces.Box(
+                 low=0, high=255, shape=shape, dtype=np.float
+            )
+
+
         elif from_pixels:
             shape = [3, height, width] if channels_first else [height, width, 3]
             self._observation_space = spaces.Box(
@@ -152,7 +160,8 @@ class DMCWrapper(core.Env):
             # obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
             # we hardcoded out the observations!
             obs = np.concatenate(list(time_step.observation.values()), axis=1)
-            obs = cv2.resize(obs, dsize=(128, 64)).ravel()
+            # obs = cv2.resize(obs, dsize=(128, 64)).ravel()
+            obs = cv2.resize(obs, dsize=(128, 64))
             # obs = _flatten_obs(obs)
         elif self._from_pixels:
             obs = self.render(
@@ -162,7 +171,7 @@ class DMCWrapper(core.Env):
                 obs = obs.transpose(2, 0, 1).copy()
         else:
             obs = _flatten_obs(time_step.observation)
-        # obs = pca_reduce_state(obs)
+        obs = pca_reduce_state(obs)
         return obs
 
     def _convert_action(self, action):
@@ -207,7 +216,6 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         self.current_state = _flatten_obs(time_step.observation)
         extra["discount"] = time_step.discount
-        obs = pca_reduce_state(obs)
         return obs, reward, done, extra
 
     def reset(self):
