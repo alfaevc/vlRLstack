@@ -3,34 +3,6 @@ from functools import partial
 import numpy as np
 import copy
 
-'''
-from sklearn.decomposition import PCA
-
-from PIL import Image
-
-
-def pca_reduce_state(state_img, n=2):
-    input_width,input_height,input_channels = state_img.shape
-    if input_width > input_height:
-        state_img = state_img.reshape(input_height,input_width,input_channels)
-
-    pil_image = Image.fromarray(state_img)
-
-    cols = pil_image.split()
-
-    pca_list = []
-    for col in cols:
-        pca = PCA(n_components=n, svd_solver='arpack')
-        col = np.array(col)
-        pca.fit(col)
-        pca_col = pca.transform(col)
-        pca_list.append(pca_col)
-
-    pca_state = np.concatenate(tuple(pca_list), axis=1).reshape(-1)
-    # print(pca_state.shape)
-    return pca_state
-'''
-
 create_rollout_function = partial
 
 
