@@ -136,7 +136,6 @@ def experiment(variant):
         qf2=qf2,
         target_qf1=target_qf1,
         target_qf2=target_qf2,
-<<<<<<< HEAD
         **variant['trainer_kwargs']
     )
     algorithm = TorchBatchRLAlgorithm(
@@ -186,20 +185,3 @@ if __name__ == "__main__":
         app.run(main)
     except SystemExit:
         pass 
-=======
-        **variant["trainer_kwargs"]
-    )
-algorithm = TorchBatchRLAlgorithm(
-    trainer=trainer,
-    exploration_env=expl_env,
-    evaluation_env=eval_env,
-    exploration_data_collector=expl_path_collector,
-    evaluation_data_collector=eval_path_collector,
-    replay_buffer=replay_buffer,
-    **variant["algorithm_kwargs"]
-)
-
-setup_logger("rgb_stacking", variant=variant)
-algorithm.to(ptu.device)
-algorithm.train()
->>>>>>> 79d4015f238aeb1f6233a4c473a0a53c00f796cd
