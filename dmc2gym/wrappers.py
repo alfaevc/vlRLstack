@@ -6,6 +6,25 @@ import numpy as np
 from rgb_stacking import environment
 import cv2
 
+from sklearn.decomposition import PCA
+
+def pca_reduce_state(state_img, method="full", n=10):
+    pil_image = Image.fromarray(state_img)
+    cols = pil_image.split()
+
+    pca_list = []
+    for col in cols:
+        pca = PCA(n_components=n, svd_solver=method)
+        col = np.array(col)
+        pca.fit(col)
+        pca_col = pca.transform(col)
+        pca_list.append(pca_col)
+
+    pca_state = np.concatenate(tuple(pca_list), axis=1)
+    dim = pca_state.shape
+    return pca_state.reshape(dim[0], dim[1], 1)
+
+
 def _spec_to_box(spec):
     def extract_min_max(s):
         # assert s.dtype == np.float64 or s.dtype == np.float32
@@ -179,12 +198,14 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         self.current_state = _flatten_obs(time_step.observation)
         extra["discount"] = time_step.discount
+        obs = pca_reduce_state(obs)
         return obs, reward, done, extra
 
     def reset(self):
         time_step = self._env.reset()
         self.current_state = _flatten_obs(time_step.observation)
         obs = self._get_obs(time_step)
+        obs = pca_reduce_state(obs)
         return obs
 
     def render(self, mode="rgb_array", height=None, width=None, camera_id=0):
