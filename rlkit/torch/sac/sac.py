@@ -12,6 +12,7 @@ from rlkit.core.eval_util import create_stats_ordered_dict
 from rlkit.torch.torch_rl_algorithm import TorchTrainer
 from rlkit.core.logging import add_prefix
 import gtimer as gt
+import gc
 
 SACLosses = namedtuple(
     'SACLosses',
@@ -242,6 +243,7 @@ class SACTrainer(TorchTrainer, LossFunction):
         return stats
 
     def end_epoch(self, epoch):
+        gc.collect()
         self._need_to_update_eval_statistics = True
 
     @property

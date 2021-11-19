@@ -2,7 +2,7 @@ from functools import partial
 
 import numpy as np
 import copy
-
+import gc 
 create_rollout_function = partial
 
 
@@ -112,7 +112,7 @@ def rollout(
         o = flatten_obs(o) # need flattened array in the replay buffer as well
         o_for_agent = preprocess_obs_for_policy_fn(o)
         # print(f"o_for_agent {o_for_agent.shape}") # we are expecting flattened array!!
-        a, agent_info = agent.get_action(o_for_agent, **get_action_kwargs)
+        a, agent_info = agent.get_action(o_for_agent, **get_action_kwargs) ## we should have some form of random exploration !!!
 
         if full_o_postprocess_func:
             full_o_postprocess_func(env, agent, o)
@@ -150,6 +150,7 @@ def rollout(
     rewards = np.array(rewards)
     if len(rewards.shape) == 1:
         rewards = rewards.reshape(-1, 1)
+    gc.collect()
     return dict(
         observations=observations,
         actions=actions,

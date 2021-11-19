@@ -56,6 +56,7 @@ expl_env = NormalizedBoxEnv(CarRacing())
 eval_env = NormalizedBoxEnv(CarRacing())
 obs_dim = expl_env.observation_space.low.size
 action_dim = eval_env.action_space.low.size
+q_additional_dim = action_dim + obs_dim - 128*64*3
 M = variant["layer_size"]
 
 # "size" will return the desired product of dimensions

@@ -8,7 +8,7 @@ from rlkit.core.batch_rl_algorithm import BatchRLAlgorithm
 from rlkit.core.online_rl_algorithm import OnlineRLAlgorithm
 from rlkit.core.trainer import Trainer
 from rlkit.torch.core import np_to_pytorch_batch
-
+import gc
 
 class TorchOnlineRLAlgorithm(OnlineRLAlgorithm):
     def to(self, device):
@@ -38,6 +38,7 @@ class TorchTrainer(Trainer, metaclass=abc.ABCMeta):
         self._num_train_steps += 1
         batch = np_to_pytorch_batch(np_batch)
         self.train_from_torch(batch)
+        gc.collect()
 
     def get_diagnostics(self):
         return OrderedDict([

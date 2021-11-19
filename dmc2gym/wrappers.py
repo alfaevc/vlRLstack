@@ -5,6 +5,8 @@ import numpy as np
 
 from rgb_stacking import environment
 import cv2
+from copy import deepcopy
+import gc
 
 def _spec_to_box(spec):
     def extract_min_max(s):
@@ -62,13 +64,12 @@ class DMCWrapper(core.Env):
         self._channels_first = channels_first
         self._using_rgb_stacking = False
 
-        
         # create task
         if domain_name == "rgb_stacking":
             self._using_rgb_stacking = True
             print(f"self._using_rgb_stacking {self._using_rgb_stacking}")
             self._env = environment.rgb_stacking(
-                observation_set=environment.ObservationSet.VISION_ONLY,
+                observation_set=environment.ObservationSet.ALL,
                 object_triplet=task_name,
             )
         else:
@@ -89,11 +90,12 @@ class DMCWrapper(core.Env):
         # print("?????")
         # create observation space
 
-        if self._using_rgb_stacking: # obs
-            shape = [128, 64, 3] # this WILL be used for indexing w,h,c. Reduce image size pls.
-            self._observation_space = spaces.Box(
-                low=0, high=255, shape=shape, dtype=np.uint8
-            )
+        if self._using_rgb_stacking:  # obs
+            boxes = [specs.Array(shape=(64, 128, 3), dtype="uint8", name="images")]
+            for i in self._env.observation_spec().values():
+                if "basket" not in i.name:
+                    boxes.append(i)
+            self._observation_space = _spec_to_box(boxes)   ## for better concatonated with 1d states
         elif from_pixels:
             shape = [3, height, width] if channels_first else [height, width, 3]
             self._observation_space = spaces.Box(
@@ -105,10 +107,9 @@ class DMCWrapper(core.Env):
             )
 
         if self._using_rgb_stacking:
-            shape = [256, 128, 3]
-            self._state_space = spaces.Box(
-                low=0, high=255, shape=shape, dtype=np.uint8
-            ) # this will not be used for indexing h,w,c
+            self._state_space = _spec_to_box(
+                self._env.observation_spec().values()
+            )  # this will not be used for indexing h,w,c
         else:
             self._state_space = _spec_to_box(self._env.observation_spec().values())
 
@@ -124,9 +125,14 @@ class DMCWrapper(core.Env):
         if self._using_rgb_stacking:
             # obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
             # we hardcoded out the observations!
-            obs = np.concatenate(list(time_step.observation.values()), axis=1)
-            obs = cv2.resize(obs, dsize=(128, 64)).ravel()
-            # obs = _flatten_obs(obs)
+            out = deepcopy(time_step.observation)
+            left = out.pop("basket_front_left/pixels")
+            right = out.pop("basket_front_right/pixels")
+            img = np.concatenate([left, right], axis=1)/255
+            img = cv2.resize(img, dsize=(128, 64)).ravel()
+            obs = np.concatenate([img, _flatten_obs(out)])
+            # print(f"obs.shape: {obs.shape}")
+            del out
         elif self._from_pixels:
             obs = self.render(
                 height=self._height, width=self._width, camera_id=self._camera_id
@@ -168,7 +174,8 @@ class DMCWrapper(core.Env):
         action = self._convert_action(action)
         assert self._true_action_space.contains(action)
         reward = 0
-        extra = {"internal_state": self._env.physics.get_state().copy()}
+        # extra = {"internal_state": self._env.physics.get_state().copy()}
+        extra = {}
 
         for _ in range(self._frame_skip):
             time_step = self._env.step(action)
@@ -179,12 +186,14 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         self.current_state = _flatten_obs(time_step.observation)
         extra["discount"] = time_step.discount
+        # gc.collect()
         return obs, reward, done, extra
 
     def reset(self):
         time_step = self._env.reset()
         self.current_state = _flatten_obs(time_step.observation)
         obs = self._get_obs(time_step)
+        gc.collect()
         return obs
 
     def render(self, mode="rgb_array", height=None, width=None, camera_id=0):
