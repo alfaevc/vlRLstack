@@ -34,7 +34,6 @@ from dm_robotics.moma import action_spaces
 
 
 import warnings
-
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 import dmc2gym
@@ -50,19 +49,21 @@ variant = dict(
     algorithm="SAC",
     version="normal",
     layer_size=256,
-    replay_buffer_size=int(10000),
+    replay_buffer_size=int(50000),
     algorithm_kwargs=dict(
-        num_epochs=int(1e6),
-        num_eval_steps_per_epoch=800,
-        num_trains_per_train_loop=800,
-        num_expl_steps_per_train_loop=400,
-        min_num_steps_before_training=1200,
-        # num_eval_steps_per_epoch=1,
-        # num_trains_per_train_loop=1,
-        # num_expl_steps_per_train_loop=1,
-        # min_num_steps_before_training=12,
+        num_epochs=3000,
+        num_eval_steps_per_epoch=1200,
+        num_trains_per_train_loop=2000,
+        num_expl_steps_per_train_loop=2000,
+        min_num_steps_before_training=2400,
         max_path_length=400,
-        batch_size=16,
+        batch_size=4096,
+        # num_eval_steps_per_epoch=1,
+        # num_trains_per_train_loop=2000,
+        # num_expl_steps_per_train_loop=1,
+        # min_num_steps_before_training=1,
+        # max_path_length=1,
+        # batch_size=1,
     ),
     trainer_kwargs=dict(
         discount=0.99,
@@ -76,10 +77,10 @@ variant = dict(
 )
 
 expl_env = NormalizedBoxEnv(
-    dmc2gym.make(domain_name="rgb_stacking", task_name="rgb_test_triplet1")
+    dmc2gym.make(domain_name="rgb_stacking_state_only", task_name="rgb_test_triplet5")
 )
 eval_env = NormalizedBoxEnv(
-    dmc2gym.make(domain_name="rgb_stacking", task_name="rgb_test_triplet1")
+    dmc2gym.make(domain_name="rgb_stacking_state_only", task_name="rgb_test_triplet5")
 )
 obs_dim = expl_env.observation_space.low.size
 action_dim = eval_env.action_space.low.size
@@ -89,102 +90,33 @@ q_additional_dim = action_dim + obs_dim - input_width * input_height * input_cha
 M = variant["layer_size"]
 
 # "size" will return the desired product of dimensions
-
-
-qf1 = PretrainedCNN(
-    input_width,
-    input_height,
-    input_channels,
+qf1 = ConcatMlp(
+    input_size=obs_dim + action_dim,
     output_size=1,
-    hidden_sizes=[128, 64],  # this is the hidden sizes of FC layers after the CNN
-    added_fc_input_size=q_additional_dim,  # layer used to merge image output and action input
-    batch_norm_fc=False,
-    init_w=1e-4,
-    # hidden_init=nn.init.xavier_uniform_,
-    # hidden_activation=nn.ReLU(),
-    # output_activation=identity,
-    output_conv_channels=False,
-    model_architecture=pretrained_model,
-    model_pretrained=True,
-    model_freeze=False,
+    hidden_sizes=[M, M],
 )
-qf2 = PretrainedCNN(
-    input_width,
-    input_height,
-    input_channels,
+qf2 = ConcatMlp(
+    input_size=obs_dim + action_dim,
     output_size=1,
-    hidden_sizes=[128, 64],  # this is the hidden sizes of FC layers after the CNN
-    added_fc_input_size=q_additional_dim,  # layer used to merge image output and action input
-    batch_norm_fc=False,
-    init_w=1e-4,
-    # hidden_init=nn.init.xavier_uniform_,
-    # hidden_activation=nn.ReLU(),
-    # output_activation=identity,
-    output_conv_channels=False,
-    model_architecture=pretrained_model,
-    model_pretrained=True,
-    model_freeze=False,
+    hidden_sizes=[M, M],
 )
-target_qf1 = PretrainedCNN(
-    input_width,
-    input_height,
-    input_channels,
+target_qf1 = ConcatMlp(
+    input_size=obs_dim + action_dim,
     output_size=1,
-    hidden_sizes=[128, 64],  # this is the hidden sizes of FC layers after the CNN
-    added_fc_input_size=q_additional_dim,  # layer used to merge image output and action input
-    batch_norm_fc=False,
-    init_w=1e-4,
-    # hidden_init=nn.init.xavier_uniform_,
-    # hidden_activation=nn.ReLU(),
-    # output_activation=identity,
-    output_conv_channels=False,
-    model_architecture=pretrained_model,
-    model_pretrained=True,
-    model_freeze=False,
+    hidden_sizes=[M, M],
 )
-target_qf2 = PretrainedCNN(
-    input_width,
-    input_height,
-    input_channels,
+target_qf2 = ConcatMlp(
+    input_size=obs_dim + action_dim,
     output_size=1,
-    hidden_sizes=[128, 64],  # this is the hidden sizes of FC layers after the CNN
-    added_fc_input_size=q_additional_dim,  # layer used to merge image output and action input
-    batch_norm_fc=False,
-    init_w=1e-4,
-    # hidden_init=nn.init.xavier_uniform_,
-    # hidden_activation=nn.ReLU(),
-    # output_activation=identity,
-    output_conv_channels=False,
-    model_architecture=pretrained_model,
-    model_pretrained=True,
-    model_freeze=False,
+    hidden_sizes=[M, M],
 )
-policy = GaussianCNNPolicy(
-    hidden_sizes=[
-        256,
-        128,
-        64,
-    ],  # hidden size of FC after CNN; it uses "return_last_activations" to skip the last FC of CNN
+policy = TanhGaussianPolicy(
     obs_dim=obs_dim,
     action_dim=action_dim,
-    std=None,
-    init_w=1e-3,
-    min_log_std=-20,
-    max_log_std=2,
-    std_architecture="shared",
-    **{
-        "input_width": input_width,
-        "input_height": input_height,
-        "input_channels": input_channels,
-        "kernel_sizes": [3, 3, 3, 3, 3],
-        "n_channels": [32, 64, 64, 128, 128],
-        "strides": [1] * 5,
-        "paddings": ["same"] * 5,
-    },
+    hidden_sizes=[M, M],
 )
 
 # now: also use pretrainedCNN
-
 # self.conv_output_flat_size: 1280 is the CNN output (effnet for example!)
 eval_policy = MakeDeterministic(policy)
 eval_path_collector = MdpPathCollector(eval_env, eval_policy,)
@@ -207,9 +139,12 @@ algorithm = TorchBatchRLAlgorithm(
     exploration_data_collector=expl_path_collector,
     evaluation_data_collector=eval_path_collector,
     replay_buffer=replay_buffer,
+    min_random_exploration_ratio=0.01,
+    max_random_exploration_ratio=0.99,
+    random_exploration_steps=100000,
     **variant["algorithm_kwargs"],
 )
 
-setup_logger("rgb_stacking_with_states", variant=variant)
+setup_logger("rgb_stacking_states_only", variant=variant)
 algorithm.to(ptu.device)
 algorithm.train()

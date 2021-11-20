@@ -65,6 +65,11 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         self.replay_buffer.end_epoch(epoch)
         self.trainer.end_epoch(epoch)
 
+
+        ### step the exploration scheduler .. ?
+        
+        
+
         for post_epoch_func in self.post_epoch_funcs:
             post_epoch_func(self, epoch)
 

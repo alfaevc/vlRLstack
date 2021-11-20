@@ -39,9 +39,13 @@ class MdpPathCollector(PathCollector):
             max_path_length,
             num_steps,
             discard_incomplete_paths,
+            eval = False,
+            random_exploration_ratio = 0.01
     ):
         paths = []
         num_steps_collected = 0
+
+        print(f"collecting paths with random_exploration_ratio: {random_exploration_ratio} in eval {eval}")
         while num_steps_collected < num_steps:
             max_path_length_this_loop = min(  # Do not go over num_steps
                 max_path_length,
@@ -53,6 +57,8 @@ class MdpPathCollector(PathCollector):
                 max_path_length=max_path_length_this_loop,
                 render=self._render,
                 render_kwargs=self._render_kwargs,
+                eval = eval,
+                random_exploration_ratio = random_exploration_ratio,
             )
             path_len = len(path['actions'])
             if (

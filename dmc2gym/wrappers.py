@@ -52,6 +52,7 @@ class DMCWrapper(core.Env):
         frame_skip=1,
         environment_kwargs=None,
         channels_first=False,
+        # using_rgb_stacking_visual = False
     ):
         assert (
             "random" in task_kwargs
@@ -65,9 +66,15 @@ class DMCWrapper(core.Env):
         self._using_rgb_stacking = False
 
         # create task
-        if domain_name == "rgb_stacking":
+        if domain_name == "rgb_stacking_state_only":
+            print(f"self._using_rgb_stacking (STATE_ONLY)")
+            self._env = environment.rgb_stacking(
+                observation_set=environment.ObservationSet.STATE_ONLY,
+                object_triplet=task_name,
+            ) # proceeding as normal!!
+        elif domain_name == "rgb_stacking":
             self._using_rgb_stacking = True
-            print(f"self._using_rgb_stacking {self._using_rgb_stacking}")
+            print(f"self._using_rgb_stacking (ALL) {self._using_rgb_stacking}")
             self._env = environment.rgb_stacking(
                 observation_set=environment.ObservationSet.ALL,
                 object_triplet=task_name,
