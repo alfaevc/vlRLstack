@@ -12,11 +12,7 @@ from PIL import Image
 
     
 
-def pca_reduce_state(state_img, n=2):
-    input_width,input_height,input_channels = state_img.shape
-    if input_width > input_height:
-        state_img = state_img.reshape(input_height,input_width,input_channels)
-
+def pca_reduce_state(state_img, n=10):
     pil_image = Image.fromarray(state_img)
 
     cols = pil_image.split()
@@ -29,9 +25,10 @@ def pca_reduce_state(state_img, n=2):
         pca_col = pca.transform(col)
         pca_list.append(pca_col)
 
-    pca_state = np.concatenate(tuple(pca_list), axis=1).reshape(-1)
-    print(pca_state.shape)
-    return pca_state
+    pca_state = np.concatenate(tuple(pca_list), axis=1)
+    dim = pca_state.shape
+    return pca_state.reshape(dim[0], dim[1], 1)
+
 
 def _spec_to_box(spec):
     def extract_min_max(s):
@@ -50,7 +47,7 @@ def _spec_to_box(spec):
         mins.append(mn)
         maxs.append(mx)
     low = np.concatenate(mins, axis=0)
-    high= np.concatenate(maxs, axis=0)
+    high = np.concatenate(maxs, axis=0)
     assert low.shape == high.shape
     return spaces.Box(low, high, dtype=np.float32)
 
@@ -117,18 +114,10 @@ class DMCWrapper(core.Env):
         # create observation space
 
         if self._using_rgb_stacking: # obs
-            '''
             shape = [128, 64, 3] # this WILL be used for indexing w,h,c. Reduce image size pls.
             self._observation_space = spaces.Box(
-                 low=0, high=255, shape=shape, dtype=np.uint8
+                low=0, high=255, shape=shape, dtype=np.uint8
             )
-            '''
-            shape = (64*3*2,) # this WILL be used for indexing w,h,c. Reduce image size pls.
-            self._observation_space = spaces.Box(
-                 low=0, high=255, shape=shape, dtype=np.float
-            )
-
-
         elif from_pixels:
             shape = [3, height, width] if channels_first else [height, width, 3]
             self._observation_space = spaces.Box(
@@ -160,8 +149,7 @@ class DMCWrapper(core.Env):
             # obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
             # we hardcoded out the observations!
             obs = np.concatenate(list(time_step.observation.values()), axis=1)
-            # obs = cv2.resize(obs, dsize=(128, 64)).ravel()
-            obs = cv2.resize(obs, dsize=(128, 64))
+            obs = cv2.resize(obs, dsize=(128, 64)).ravel()
             # obs = _flatten_obs(obs)
         elif self._from_pixels:
             obs = self.render(
@@ -171,7 +159,6 @@ class DMCWrapper(core.Env):
                 obs = obs.transpose(2, 0, 1).copy()
         else:
             obs = _flatten_obs(time_step.observation)
-        obs = pca_reduce_state(obs)
         return obs
 
     def _convert_action(self, action):
@@ -216,12 +203,14 @@ class DMCWrapper(core.Env):
         obs = self._get_obs(time_step)
         self.current_state = _flatten_obs(time_step.observation)
         extra["discount"] = time_step.discount
+        # obs = pca_reduce_state(obs)
         return obs, reward, done, extra
 
     def reset(self):
         time_step = self._env.reset()
         self.current_state = _flatten_obs(time_step.observation)
-        obs = self._get_obs(time_step) 
+        obs = self._get_obs(time_step)
+        # obs = pca_reduce_state(obs)
         return obs
 
     def render(self, mode="rgb_array", height=None, width=None, camera_id=0):
