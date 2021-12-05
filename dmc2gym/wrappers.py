@@ -171,7 +171,7 @@ class DMCWrapper(core.Env):
                 obs = obs.transpose(2, 0, 1).copy()
         else:
             obs = _flatten_obs(time_step.observation)
-        obs = pca_reduce_state(obs)
+        # obs = pca_reduce_state(obs)
         return obs
 
     def _convert_action(self, action):
