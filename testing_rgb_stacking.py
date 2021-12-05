@@ -43,7 +43,8 @@ from dm_env import specs
 import numpy as np
 from rgb_stacking import environment
 
-#ptu.set_gpu_mode(True)
+ptu.set_gpu_mode(True)
+
 def main(_argv):
     variant = dict(
         algorithm="SAC",
@@ -81,12 +82,9 @@ def main(_argv):
     M = variant["layer_size"]
 
     # "size" will return the desired product of dimensions
+    print(expl_env.observation_space.shape)
 
-    (
-        input_width,
-        input_height,
-        input_channels,
-    ) = expl_env.observation_space.shape  # channel last!!!
+    input_width, input_height, input_channels = expl_env.observation_space.shape  # channel last!!!
     qf1 = PretrainedCNN(
         input_width,
         input_height,

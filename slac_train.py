@@ -22,18 +22,19 @@ import sys
 from dm_control import viewer
 from dm_robotics.moma import action_spaces
 
-import dmc2gym
-from rgb_stacking import environment
-
 
 import warnings
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+import dmc2gym
+from rgb_stacking import environment
+
 ptu.set_gpu_mode(True)
 
 def main(args):
 
+    '''
     env = make_dmc(
         domain_name=args.domain_name,
         task_name=args.task_name,
@@ -46,9 +47,10 @@ def main(args):
         action_repeat=args.action_repeat,
         image_size=64,
     )
+    '''
 
-    #env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
-    #env_test = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
+    env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
+    env_test = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
 
     log_dir = os.path.join(
         "logs",

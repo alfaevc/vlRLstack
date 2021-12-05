@@ -6,6 +6,7 @@ import numpy as np
 from rgb_stacking import environment
 import cv2
 
+'''
 from sklearn.decomposition import PCA
 
 from PIL import Image
@@ -32,6 +33,7 @@ def pca_reduce_state(state_img, n=2):
     pca_state = np.concatenate(tuple(pca_list), axis=1).reshape(-1)
     # print(pca_state.shape)
     return pca_state
+'''
 
 def _spec_to_box(spec):
     def extract_min_max(s):
@@ -50,7 +52,7 @@ def _spec_to_box(spec):
         mins.append(mn)
         maxs.append(mx)
     low = np.concatenate(mins, axis=0)
-    high= np.concatenate(maxs, axis=0)
+    high = np.concatenate(maxs, axis=0)
     assert low.shape == high.shape
     return spaces.Box(low, high, dtype=np.float32)
 
@@ -117,18 +119,10 @@ class DMCWrapper(core.Env):
         # create observation space
 
         if self._using_rgb_stacking: # obs
-            '''
             shape = [128, 64, 3] # this WILL be used for indexing w,h,c. Reduce image size pls.
             self._observation_space = spaces.Box(
-                 low=0, high=255, shape=shape, dtype=np.uint8
+                low=0, high=255, shape=shape, dtype=np.uint8
             )
-            '''
-            shape = (64*3*2,) # this WILL be used for indexing w,h,c. Reduce image size pls.
-            self._observation_space = spaces.Box(
-                 low=0, high=255, shape=shape, dtype=np.float
-            )
-
-
         elif from_pixels:
             shape = [3, height, width] if channels_first else [height, width, 3]
             self._observation_space = spaces.Box(
@@ -160,8 +154,7 @@ class DMCWrapper(core.Env):
             # obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
             # we hardcoded out the observations!
             obs = np.concatenate(list(time_step.observation.values()), axis=1)
-            # obs = cv2.resize(obs, dsize=(128, 64)).ravel()
-            obs = cv2.resize(obs, dsize=(128, 64))
+            obs = cv2.resize(obs, dsize=(128, 64)).ravel()
             # obs = _flatten_obs(obs)
         elif self._from_pixels:
             obs = self.render(
@@ -221,7 +214,7 @@ class DMCWrapper(core.Env):
     def reset(self):
         time_step = self._env.reset()
         self.current_state = _flatten_obs(time_step.observation)
-        obs = self._get_obs(time_step) 
+        obs = self._get_obs(time_step)
         return obs
 
     def render(self, mode="rgb_array", height=None, width=None, camera_id=0):
