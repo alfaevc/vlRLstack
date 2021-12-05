@@ -30,7 +30,7 @@ def pca_reduce_state(state_img, n=2):
         pca_list.append(pca_col)
 
     pca_state = np.concatenate(tuple(pca_list), axis=1).reshape(-1)
-    print(pca_state.shape)
+    # print(pca_state.shape)
     return pca_state
 
 def _spec_to_box(spec):

@@ -43,7 +43,8 @@ from dm_env import specs
 import numpy as np
 from rgb_stacking import environment
 
-# ptu.set_gpu_mode(True)
+ptu.set_gpu_mode(True)
+
 def experiment(variant):
     variant = dict(
         algorithm="SAC",
