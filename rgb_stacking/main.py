@@ -50,7 +50,7 @@ _POLICY_OBJECT_TRIPLET = flags.DEFINE_enum(
     'Optional test triplet name indicating to load a policy that was trained on'
     ' this triplet.')
 _LAUNCH_VIEWER = flags.DEFINE_bool(
-    'launch_viewer', True,
+    'launch_viewer', False,
     'Optional boolean. If True, will launch the dm_control viewer. If False'
     ' will load the policy, run it and save a recording of it as an .mp4.')
 
@@ -69,6 +69,9 @@ def run_episode_and_render(
   while not timestep.last():
     (action, _), state = policy.step(timestep, state)
     timestep = env.step(action)
+    print("The reward is {}".format(timestep.reward))
+    print("The discount is {}".format(timestep.discount))
+    # print("The obs is {}".format(timestep.observation))
     rendered_images.append(env.physics.render(camera_id='main_camera'))
   logging.info('Done rendering!')
   return rendered_images
@@ -95,7 +98,7 @@ def main(argv: Sequence[str]) -> None:
       # The viewer requires a callable as a policy.
       if policy is not None:
         policy = policy_loading.StatefulPolicyCallable(policy)
-      viewer.launch(env, policy=policy)
+      # viewer.launch(env, policy=policy)
     else:
 
       # Render the episode.
