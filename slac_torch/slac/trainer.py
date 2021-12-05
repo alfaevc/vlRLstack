@@ -85,7 +85,7 @@ class Trainer:
             os.makedirs(self.model_dir)
 
         # Other parameters.
-        self.action_repeat = self.env.action_repeat
+        # self.action_repeat = self.env.action_repeat
         self.num_steps = num_steps
         self.initial_collection_steps = initial_collection_steps
         self.initial_learning_steps = initial_learning_steps
