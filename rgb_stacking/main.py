@@ -80,13 +80,12 @@ def run_episode_and_render(
 def main(argv: Sequence[str]) -> None:
 
   del argv
-
+  # print(_TEST_OBJECT_TRIPLETS)
   if not _LAUNCH_VIEWER.value and _POLICY_OBJECT_TRIPLET.value is None:
     raise ValueError('To record a video, a policy must be given.')
 
   # Load the rgb stacking environment.
   with environment.rgb_stacking(object_triplet=_OBJECT_TRIPLET.value) as env:
-
     # Optionally load a policy trained on one of these environments.
     if _POLICY_OBJECT_TRIPLET.value is not None:
       policy_path = _POLICY_PATHS[_POLICY_OBJECT_TRIPLET.value]
@@ -107,7 +106,7 @@ def main(argv: Sequence[str]) -> None:
       # Save as mp4 video in current directory.
       height, width, _ = rendered_episode[0].shape
       out = cv2.VideoWriter(
-          './videos/saved_mpo_policy.mp4',
+          './videos/saved_mpo {} policy {}.mp4'.format(_OBJECT_TRIPLET.value, _POLICY_OBJECT_TRIPLET.value),
           cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
           1.0 / env.task.control_timestep, (width, height))
       for image in rendered_episode:
