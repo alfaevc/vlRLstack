@@ -107,7 +107,7 @@ def main(argv: Sequence[str]) -> None:
       # Save as mp4 video in current directory.
       height, width, _ = rendered_episode[0].shape
       out = cv2.VideoWriter(
-          './rendered_policy.mp4',
+          './videos/saved_mpo_policy.mp4',
           cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
           1.0 / env.task.control_timestep, (width, height))
       for image in rendered_episode:
