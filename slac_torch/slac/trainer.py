@@ -99,6 +99,7 @@ class Trainer:
         t = 0
         # Initialize the environment.
         state = self.env.reset()
+        # print(state.shape)
         self.ob.reset_episode(state)
         self.algo.buffer.reset_episode(state)
 
@@ -109,7 +110,7 @@ class Trainer:
         # Update latent variable model first so that SLAC can learn well using (learned) latent dynamics.
         bar = tqdm(range(self.initial_learning_steps))
 
-        #checkpoint
+        print("random pretrain done!")
 
         for _ in bar:
             bar.set_description("Updating latent variable model.")

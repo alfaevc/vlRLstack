@@ -154,7 +154,9 @@ class DMCWrapper(core.Env):
             # obs = time_step.observation['basket_front_left/pixels'],  time_step.observation['basket_front_right/pixels']
             # we hardcoded out the observations!
             obs = np.concatenate(list(time_step.observation.values()), axis=1)
-            obs = cv2.resize(obs, dsize=(128, 64)).ravel()
+            # print(obs.shape)
+            obs = cv2.resize(obs, dsize=(128, 64)).reshape((128,64,3))
+            # print(obs.shape)
             # obs = _flatten_obs(obs)
         elif self._from_pixels:
             obs = self.render(
