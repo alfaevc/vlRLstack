@@ -26,7 +26,7 @@ class SlacAlgorithm:
         gamma=0.99,
         batch_size_sac=256,
         batch_size_latent=32,
-        buffer_size=10 ** 5,
+        buffer_size=10 ** 4,
         num_sequences=8,
         lr_sac=3e-4,
         lr_latent=1e-4,

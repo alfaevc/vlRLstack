@@ -127,7 +127,7 @@ class ReplayBuffer:
         idxes = np.random.randint(low=0, high=self._n, size=batch_size)
         state_ = np.empty((batch_size, self.num_sequences + 1, *self.state_shape), dtype=np.uint8)
         for i, idx in enumerate(idxes):
-            state_[i, ...] = self.state_[idx]
+            state_[i, ...] = self.state_[idx].flatten()
         state_ = torch.tensor(state_, dtype=torch.uint8, device=self.device).float().div_(255.0)
         return state_, self.action_[idxes], self.reward_[idxes], self.done_[idxes]
 

@@ -52,9 +52,9 @@ class Trainer:
         algo,
         log_dir,
         seed=0,
-        num_steps=3 * 10 ** 6,
-        initial_collection_steps=10 ** 4,
-        initial_learning_steps=10 ** 5,
+        num_steps=3 * 10 ** 3,
+        initial_collection_steps=10 ** 3,
+        initial_learning_steps=10 ** 3,
         num_sequences=8,
         eval_interval=10 ** 4,
         num_eval_episodes=5,
@@ -105,9 +105,12 @@ class Trainer:
         # Collect trajectories using random policy.
         for step in range(1, self.initial_collection_steps + 1):
             t = self.algo.step(self.env, self.ob, t, step <= self.initial_collection_steps)
-
+        
         # Update latent variable model first so that SLAC can learn well using (learned) latent dynamics.
         bar = tqdm(range(self.initial_learning_steps))
+
+        #checkpoint
+
         for _ in bar:
             bar.set_description("Updating latent variable model.")
             self.algo.update_latent(self.writer)
