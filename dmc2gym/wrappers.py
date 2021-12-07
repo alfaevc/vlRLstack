@@ -119,7 +119,7 @@ class DMCWrapper(core.Env):
         # create observation space
 
         if self._using_rgb_stacking: # obs
-            shape = [128, 64, 3] # this WILL be used for indexing w,h,c. Reduce image size pls.
+            shape = [3, 128, 64] # this WILL be used for indexing c,w,h. Reduce image size pls.
             self._observation_space = spaces.Box(
                 low=0, high=255, shape=shape, dtype=np.uint8
             )
@@ -155,7 +155,7 @@ class DMCWrapper(core.Env):
             # we hardcoded out the observations!
             obs = np.concatenate(list(time_step.observation.values()), axis=1)
             # print(obs.shape)
-            obs = cv2.resize(obs, dsize=(128, 64)).reshape((128,64,3))
+            obs = cv2.resize(obs, dsize=(128, 64)).reshape((3,128,64))
             # print(obs.shape)
             # obs = _flatten_obs(obs)
         elif self._from_pixels:
