@@ -121,6 +121,7 @@ class Trainer:
         iters = tqdm(range(self.initial_collection_steps + 1, self.num_steps + 1))
 
         for step in iters:
+            iters.set_description("Training policy")
             t = self.algo.step(self.env, self.ob, t, False)
 
             # Update the algorithm.
@@ -141,18 +142,21 @@ class Trainer:
 
     def evaluate(self, step_env):
         mean_return = 0.0
+        max_step = 1000
 
         for i in range(self.num_eval_episodes):
             state = self.env_test.reset()
             self.ob_test.reset_episode(state)
             episode_return = 0.0
             done = False
+            j = 0
 
-            while not done:
+            while not done and j < max_step:
                 action = self.algo.exploit(self.ob_test)
                 state, reward, done, _ = self.env_test.step(action)
                 self.ob_test.append(state, action)
                 episode_return += reward
+                j += 1
 
             mean_return += episode_return / self.num_eval_episodes
 
