@@ -52,11 +52,11 @@ class Trainer:
         algo,
         log_dir,
         seed=0,
-        num_steps=3 * 10 ** 3,
+        num_steps=3 * 10 ** 4,
         initial_collection_steps=10 ** 3,
         initial_learning_steps=10 ** 3,
         num_sequences=8,
-        eval_interval=10 ** 4,
+        eval_interval=10 ** 3,
         num_eval_episodes=5,
     ):
         # Env to collect samples.
@@ -117,7 +117,10 @@ class Trainer:
             self.algo.update_latent(self.writer)
 
         # Iterate collection, update and evaluation.
-        for step in range(self.initial_collection_steps + 1, self.num_steps // self.action_repeat + 1):
+        # for step in range(self.initial_collection_steps + 1, self.num_steps // self.action_repeat + 1):
+        iters = tqdm(range(self.initial_collection_steps + 1, self.num_steps + 1))
+
+        for step in iters:
             t = self.algo.step(self.env, self.ob, t, False)
 
             # Update the algorithm.
@@ -125,11 +128,14 @@ class Trainer:
             self.algo.update_sac(self.writer)
 
             # Evaluate regularly.
-            step_env = step * self.action_repeat
+            # step_env = step * self.action_repeat
+            step_env = step
             if step_env % self.eval_interval == 0:
+                print("Save model at step {}".format(step_env))
                 self.evaluate(step_env)
                 self.algo.save_model(os.path.join(self.model_dir, f"step{step_env}"))
 
+        print("Logging done!")
         # Wait for logging to be finished.
         sleep(10)
 

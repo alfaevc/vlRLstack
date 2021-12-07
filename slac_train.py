@@ -73,7 +73,6 @@ def main(args):
         algo=algo,
         log_dir=log_dir,
         seed=args.seed,
-        num_steps=args.num_steps,
     )
     trainer.train()
 
