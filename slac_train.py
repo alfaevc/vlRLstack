@@ -58,6 +58,7 @@ def main(args):
         f'slac-seed{args.seed}-{datetime.now().strftime("%Y%m%d-%H%M")}',
     )
     print(env.observation_space.shape)
+    print(env.action_space.shape)
 
     algo = SlacAlgorithm(
         state_shape=env.observation_space.shape,
