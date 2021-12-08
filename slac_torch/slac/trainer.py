@@ -52,9 +52,9 @@ class Trainer:
         algo,
         log_dir,
         seed=0,
-        num_steps=3 * 10 ** 4,
-        initial_collection_steps=10 ** 3,
-        initial_learning_steps=10 ** 3,
+        num_steps=10 ** 6,
+        initial_collection_steps=10 ** 4,
+        initial_learning_steps=10 ** 4,
         num_sequences=8,
         eval_interval=10 ** 3,
         num_eval_episodes=5,
@@ -132,9 +132,10 @@ class Trainer:
             # step_env = step * self.action_repeat
             step_env = step
             if step_env % self.eval_interval == 0:
-                print("Save model at step {}".format(step_env))
                 self.evaluate(step_env)
-                self.algo.save_model(os.path.join(self.model_dir, f"step{step_env}"))
+                if step_env % (self.eval_interval*10) == 0:
+                    print("Save model at step {}".format(step_env))
+                    self.algo.save_model(os.path.join(self.model_dir, f"step{step_env}"))
 
         print("Logging done!")
         # Wait for logging to be finished.

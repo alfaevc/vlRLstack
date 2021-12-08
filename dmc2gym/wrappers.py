@@ -212,6 +212,24 @@ class DMCWrapper(core.Env):
         self.current_state = _flatten_obs(time_step.observation)
         extra["discount"] = time_step.discount
         return obs, reward, done, extra
+    
+    def step_rnd(self, action, rnd_net):
+        assert self._norm_action_space.contains(action)
+        action = self._convert_action(action)
+        assert self._true_action_space.contains(action)
+        reward = 0
+        extra = {"internal_state": self._env.physics.get_state().copy()}
+
+        for _ in range(self._frame_skip):
+            time_step = self._env.step(action)
+            reward += time_step.reward or 0
+            done = time_step.last()
+            if done:
+                break
+        obs = self._get_obs(time_step)
+        self.current_state = _flatten_obs(time_step.observation)
+        extra["discount"] = time_step.discount
+        return obs, reward+rnd_net.get_reward(obs), done, extra
 
     def reset(self):
         time_step = self._env.reset()

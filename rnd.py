@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 
-from rlkit.torch.networks import ConcatMlp, PretrainedCNN, CNN
+from rlkit.torch.networks import PretrainedCNN, CNN
 
 
 class RND_Net(nn.Module):
