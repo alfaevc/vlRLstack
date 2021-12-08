@@ -30,6 +30,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 import dmc2gym
 from rgb_stacking import environment
 
+from rnd import RND_CNN
+
 ptu.set_gpu_mode(True)
 
 def main(args):
@@ -57,8 +59,13 @@ def main(args):
         f"{args.domain_name}-{args.task_name}",
         f'slac-seed{args.seed}-{datetime.now().strftime("%Y%m%d-%H%M")}',
     )
+    input_width, input_height, input_channels = env.observation_space.shape
+    action_dim, = env.action_space.shape
+
     print(env.observation_space.shape)
     print(env.action_space.shape)
+
+    rnd = RND_CNN(input_width, input_height, input_channels, action_dim)
 
     algo = SlacAlgorithm(
         state_shape=env.observation_space.shape,
@@ -66,12 +73,14 @@ def main(args):
         action_repeat=args.action_repeat,
         device=torch.device("cuda" if args.cuda else "cpu"),
         seed=args.seed,
+        rnd_net=rnd,
     )
     trainer = Trainer(
         env=env,
         env_test=env_test,
         algo=algo,
         log_dir=log_dir,
+        rnd_net=rnd,
         seed=args.seed,
     )
     trainer.train()

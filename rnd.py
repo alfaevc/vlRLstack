@@ -21,7 +21,7 @@ class RND_Net(nn.Module):
         return self.layers(x)
 
 
-class RND(nn.Module):
+class RND_CNN(nn.Module):
     def __init__(self, input_width, input_height, input_channels, action_dim):
         super().__init__()
         self.action_dim = action_dim

@@ -51,6 +51,7 @@ class Trainer:
         env_test,
         algo,
         log_dir,
+        # rnd_net,
         seed=0,
         num_steps=10 ** 6,
         initial_collection_steps=10 ** 4,
@@ -91,6 +92,8 @@ class Trainer:
         self.initial_learning_steps = initial_learning_steps
         self.eval_interval = eval_interval
         self.num_eval_episodes = num_eval_episodes
+
+        # self.rnd_net = rnd_net
 
     def train(self):
         # Time to start training.

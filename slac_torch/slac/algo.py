@@ -23,6 +23,7 @@ class SlacAlgorithm:
         action_repeat,
         device,
         seed,
+        rnd_net,
         gamma=0.99,
         batch_size_sac=256,
         batch_size_latent=32,
@@ -50,6 +51,8 @@ class SlacAlgorithm:
         self.latent = LatentModel(state_shape, action_shape, feature_dim, z1_dim, z2_dim, hidden_units).to(device)
         soft_update(self.critic_target, self.critic, 1.0)
         grad_false(self.critic_target)
+
+        self.rnd_net = rnd_net
 
         # Target entropy is -|A|.
         self.target_entropy = -float(action_shape[0])
@@ -101,6 +104,7 @@ class SlacAlgorithm:
             action = self.actor(feature_action)
         return action.cpu().numpy()[0]
 
+    
     def step(self, env, ob, t, is_random):
         t += 1
 
@@ -112,6 +116,31 @@ class SlacAlgorithm:
         state, reward, done, _ = env.step(action)
         mask = False if t == env._max_episode_steps else done
         ob.append(state, action)
+        self.buffer.append(action, reward, mask, state, done)
+
+        if done:
+            t = 0
+            state = env.reset()
+            ob.reset_episode(state)
+            self.buffer.reset_episode(state)
+
+        return t
+    
+    def step_rnd(self, env, ob, t, is_random):
+        t += 1
+
+        if is_random:
+            action = env.action_space.sample()
+        else:
+            action = self.explore(ob)
+
+        state, reward, done, _ = env.step(action)
+        mask = False if t == env._max_episode_steps else done
+        ob.append(state, action)
+        reward += self.rnd_net.get_reward(state)
+        
+        self.rnd_net.train(state)
+
         self.buffer.append(action, reward, mask, state, done)
 
         if done:
