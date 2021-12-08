@@ -53,7 +53,7 @@ class Trainer:
         log_dir,
         # rnd_net,
         seed=0,
-        num_steps=10 ** 6,
+        num_steps=10 ** 7,
         initial_collection_steps=10 ** 4,
         initial_learning_steps=10 ** 4,
         num_sequences=8,
@@ -136,9 +136,9 @@ class Trainer:
             step_env = step
             if step_env % self.eval_interval == 0:
                 self.evaluate(step_env)
-                if step_env % (self.eval_interval*10) == 0:
-                    print("Save model at step {}".format(step_env))
-                    self.algo.save_model(os.path.join(self.model_dir, f"step{step_env}"))
+            if step_env % (self.eval_interval*10) == 0:
+                print("Save model at step {}".format(step_env))
+                self.algo.save_model(os.path.join(self.model_dir, f"step{step_env}"))
 
         print("Logging done!")
         # Wait for logging to be finished.
