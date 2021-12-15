@@ -36,7 +36,7 @@ _ALL_OBJECT_TRIPLETS = _TEST_OBJECT_TRIPLETS + (
     'rgb_test_random',
     )
 
-_POLICY_DIR = ('saved_models')
+_POLICY_DIR = ('assets/saved_models')
 
 _POLICY_PATHS = {
     k: f'{_POLICY_DIR}/mpo_state_{k}' for k in _TEST_OBJECT_TRIPLETS
@@ -69,9 +69,6 @@ def run_episode_and_render(
   while not timestep.last():
     (action, _), state = policy.step(timestep, state)
     timestep = env.step(action)
-    print("The reward is {}".format(timestep.reward))
-    print("The discount is {}".format(timestep.discount))
-    # print("The obs is {}".format(timestep.observation))
     rendered_images.append(env.physics.render(camera_id='main_camera'))
   logging.info('Done rendering!')
   return rendered_images
@@ -80,12 +77,13 @@ def run_episode_and_render(
 def main(argv: Sequence[str]) -> None:
 
   del argv
-  # print(_TEST_OBJECT_TRIPLETS)
+
   if not _LAUNCH_VIEWER.value and _POLICY_OBJECT_TRIPLET.value is None:
     raise ValueError('To record a video, a policy must be given.')
 
   # Load the rgb stacking environment.
   with environment.rgb_stacking(object_triplet=_OBJECT_TRIPLET.value) as env:
+
     # Optionally load a policy trained on one of these environments.
     if _POLICY_OBJECT_TRIPLET.value is not None:
       policy_path = _POLICY_PATHS[_POLICY_OBJECT_TRIPLET.value]
@@ -97,7 +95,7 @@ def main(argv: Sequence[str]) -> None:
       # The viewer requires a callable as a policy.
       if policy is not None:
         policy = policy_loading.StatefulPolicyCallable(policy)
-      # viewer.launch(env, policy=policy)
+      viewer.launch(env, policy=policy)
     else:
 
       # Render the episode.
@@ -106,7 +104,7 @@ def main(argv: Sequence[str]) -> None:
       # Save as mp4 video in current directory.
       height, width, _ = rendered_episode[0].shape
       out = cv2.VideoWriter(
-          './videos/saved_mpo {} policy {}.mp4'.format(_OBJECT_TRIPLET.value, _POLICY_OBJECT_TRIPLET.value),
+          './rendered_policy_5.mp4',
           cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
           1.0 / env.task.control_timestep, (width, height))
       for image in rendered_episode:
