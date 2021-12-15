@@ -5,16 +5,14 @@ os.environ.get("LD_LIBRARY_PATH", "")
 import argparse
 from datetime import datetime
 
-import torch
+#import rlkit.torch.pytorch_util as ptu
+#from rlkit.envs.wrappers import NormalizedBoxEnv
 
-import rlkit.torch.pytorch_util as ptu
-from rlkit.envs.wrappers import NormalizedBoxEnv
-
-from slac_torch.slac.algo import SlacAlgorithm
+from rljax.algorithm.slac import SLAC
 from slac_torch.slac.env import make_dmc
-from slac_torch.slac.trainer import Trainer
+from rljax.trainer.slac_trainer import SLACTrainer
 
-import torchvision.models as models
+# import torchvision.models as models
 
 from absl import app, flags
 from typing import Sequence
@@ -32,11 +30,10 @@ from rgb_stacking import environment
 
 from rnd import RND_CNN
 
-ptu.set_gpu_mode(True)
+# ptu.set_gpu_mode(True)
 
 def main(args):
 
-    '''
     env = make_dmc(
         domain_name=args.domain_name,
         task_name=args.task_name,
@@ -49,10 +46,9 @@ def main(args):
         action_repeat=args.action_repeat,
         image_size=64,
     )
-    '''
 
-    env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
-    env_test = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
+    #env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
+    #env_test = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
 
     log_dir = os.path.join(
         "logs",
@@ -67,7 +63,14 @@ def main(args):
 
     rnd = RND_CNN(input_width, input_height, input_channels, action_dim)
 
-    algo = SlacAlgorithm(
+
+    algo = SLAC(
+        num_agent_steps = 10**6,
+        state_space = env.observation_space.shape,
+        action_space = env.action_space.shape,
+        seed = args.seed)
+    '''
+        algo = SlacAlgorithm(
         state_shape=env.observation_space.shape,
         action_shape=env.action_space.shape,
         action_repeat=args.action_repeat,
@@ -75,7 +78,8 @@ def main(args):
         seed=args.seed,
         rnd_net=rnd,
     )
-    trainer = Trainer(
+    '''
+    trainer = SLACTrainer(
         env=env,
         env_test=env_test,
         algo=algo,
