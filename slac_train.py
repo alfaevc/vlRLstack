@@ -34,6 +34,7 @@ from rnd import RND_CNN
 
 def main(args):
 
+    '''
     env = make_dmc(
         domain_name=args.domain_name,
         task_name=args.task_name,
@@ -46,6 +47,10 @@ def main(args):
         action_repeat=args.action_repeat,
         image_size=64,
     )
+    '''
+    env = dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1')
+    env_test = dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1')
+
 
     #env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
     #env_test = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
@@ -66,8 +71,8 @@ def main(args):
 
     algo = SLAC(
         num_agent_steps = 10**6,
-        state_space = env.observation_space.shape,
-        action_space = env.action_space.shape,
+        state_space = env.observation_space,
+        action_space = env.action_space,
         seed = args.seed)
     '''
         algo = SlacAlgorithm(
