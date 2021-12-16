@@ -1,6 +1,7 @@
 import os
 os.environ["LD_LIBRARY_PATH"] = ":/home/ztan/.mujoco/mujoco200/bin"
 os.environ.get("LD_LIBRARY_PATH", "")
+# os.environ.get('XLA_FLAGS')
 
 import argparse
 from datetime import datetime
@@ -9,7 +10,7 @@ from datetime import datetime
 #from rlkit.envs.wrappers import NormalizedBoxEnv
 
 from rljax.algorithm.slac import SLAC
-from slac_torch.slac.env import make_dmc
+# from slac_torch.slac.env import make_dmc
 from rljax.trainer.slac_trainer import SLACTrainer
 
 # import torchvision.models as models
@@ -33,23 +34,8 @@ from rnd import RND_CNN
 # ptu.set_gpu_mode(True)
 
 def main(args):
-
-    '''
-    env = make_dmc(
-        domain_name=args.domain_name,
-        task_name=args.task_name,
-        action_repeat=args.action_repeat,
-        image_size=64,
-    )
-    env_test = make_dmc(
-        domain_name=args.domain_name,
-        task_name=args.task_name,
-        action_repeat=args.action_repeat,
-        image_size=64,
-    )
-    '''
-    env = dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1')
-    env_test = dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1')
+    env = dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet4')
+    env_test = dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet4')
 
 
     #env = NormalizedBoxEnv(dmc2gym.make(domain_name="rgb_stacking", task_name='rgb_test_triplet1'))
@@ -63,10 +49,7 @@ def main(args):
     input_channels, input_width, input_height = env.observation_space.shape
     action_dim, = env.action_space.shape
 
-    print(env.observation_space.shape)
-    print(env.action_space.shape)
-
-    rnd = RND_CNN(input_width, input_height, input_channels, action_dim)
+    # rnd = RND_CNN(input_width, input_height, input_channels, action_dim)
 
 
     algo = SLAC(
@@ -74,16 +57,7 @@ def main(args):
         state_space = env.observation_space,
         action_space = env.action_space,
         seed = args.seed)
-    '''
-        algo = SlacAlgorithm(
-        state_shape=env.observation_space.shape,
-        action_shape=env.action_space.shape,
-        action_repeat=args.action_repeat,
-        device=torch.device("cuda" if args.cuda else "cpu"),
-        seed=args.seed,
-        rnd_net=rnd,
-    )
-    '''
+
     trainer = SLACTrainer(
         env=env,
         env_test=env_test,

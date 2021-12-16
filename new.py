@@ -4,7 +4,7 @@ from datetime import datetime
 from absl import app, flags
 
 from rljax.algorithm import SLAC
-from rljax.env import make_continuous_env
+# from rljax.env import make_continuous_env
 from rljax.trainer import SLACTrainer
 import dmc2gym
 from rgb_stacking import environment

@@ -87,7 +87,7 @@ class DMCWrapper(core.Env):
 
 
         if self._using_rgb_stacking:
-            shape = [3,64,64]
+            shape = [64,64,3]
             self._observation_space = spaces.Box(
                 low=0, high=255, shape=shape, dtype=np.uint8
             )
@@ -100,15 +100,15 @@ class DMCWrapper(core.Env):
             self._observation_space = _spec_to_box(
                 self._env.observation_spec().values()
             )
-
+        '''
         if self._using_rgb_stacking:
-            shape = [3, 256, 128]
+            shape = [256, 128, 3]
             self._state_space = spaces.Box(
                 low=0, high=255, shape=shape, dtype=np.uint8
             ) # this will not be used for indexing h,w,c
         else:
             self._state_space = _spec_to_box(self._env.observation_spec().values())
-
+        '''
         self.current_state = None
 
         # set seed
@@ -120,7 +120,7 @@ class DMCWrapper(core.Env):
     def _get_obs(self, time_step):
         if self._using_rgb_stacking:
             obs = np.concatenate(list(time_step.observation.values()), axis=1)
-            obs = cv2.resize(obs, dsize=(64, 64)).reshape((3,64,64))
+            obs = cv2.resize(obs, dsize=(64, 64)).reshape((64,64,3))
         elif self._from_pixels:
             obs = self.render(
                 height=self._height, width=self._width, camera_id=self._camera_id
