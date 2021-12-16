@@ -25,7 +25,7 @@ class SLACTrainer(Trainer):
         num_agent_steps=10 ** 6,
         eval_interval=10 ** 4,
         num_eval_episodes=10,
-        save_params=False,
+        save_params=True,
     ):
         super(SLACTrainer, self).__init__(
             env=env,
