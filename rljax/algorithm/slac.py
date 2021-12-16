@@ -24,7 +24,7 @@ class SLAC(SlacMixIn, SAC):
         action_space,
         seed,
         max_grad_norm=None,
-        gamma=0.99,
+        gamma=1,
         num_sequences=8,
         num_critics=2,
         buffer_size=10 ** 5,

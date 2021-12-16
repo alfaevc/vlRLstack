@@ -15,11 +15,11 @@ from rljax.trainer.slac_trainer import SLACTrainer
 
 # import torchvision.models as models
 
-from absl import app, flags
+#from absl import app, flags
 from typing import Sequence
 import sys
-from dm_control import viewer
-from dm_robotics.moma import action_spaces
+#from dm_control import viewer
+#from dm_robotics.moma import action_spaces
 
 
 import warnings

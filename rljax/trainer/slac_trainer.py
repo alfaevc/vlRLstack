@@ -43,6 +43,7 @@ class SLACTrainer(Trainer):
         # Observations for training and evaluation.
         self.ob = SlacObservation(env.observation_space, env.action_space, num_sequences)
         self.ob_test = SlacObservation(env.observation_space, env.action_space, num_sequences)
+        self.csv_path = os.path.join(log_dir, "log.csv")
 
     def train(self):
         # Time to start training.
