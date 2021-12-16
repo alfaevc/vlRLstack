@@ -52,8 +52,6 @@ class SLAC(SlacMixIn, SAC):
         z1_dim=32,
         z2_dim=256,
     ):
-        print(len(state_space.shape))
-        print(state_space.shape[:3])
         #assert len(state_space.shape) == 3 and state_space.shape[:2] == (64, 64)
         assert (state_space.high == 255).all()
         SlacMixIn.__init__(
@@ -359,7 +357,7 @@ class SLAC(SlacMixIn, SAC):
         for t in range(self.num_sequences + 1):
             if t == 0:
                 z1_mean, z1_std = self.model["z1_post_init"].apply(params_model["z1_post_init"], feature_[:, 0])
-                print("Here")
+                # print("Here")
                 z1 = z1_mean + jax.random.normal(key_list[0], z1_std.shape) * z1_std
                 z2_mean, z2_std = self.model["z2_init"].apply(params_model["z2_init"], z1)
                 z2 = z2_mean + jax.random.normal(key_list[1], z2_std.shape) * z2_std
