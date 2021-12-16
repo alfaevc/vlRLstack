@@ -1,0 +1,2 @@
+conda install -c conda-forge jax dm-haiku optax pandas tensorboardx lxml pyopengl typing-extensions opencv absl-py
+pip install dm-robotics-moma==0.0.4 dm-robotics-manipulation==0.0.4 dm-reverb-nightly==0.5.0.dev20211104 dm-control==0.0.364896371

@@ -125,6 +125,7 @@ class SlacMixIn:
 
     def save_params(self, save_dir):
         save_params(self.params_model, os.path.join(save_dir, "params_model.npz"))
+        print(f"saving model param to {save_dir}")
 
     def load_params(self, save_dir):
         self.params_model = load_params(os.path.join(save_dir, "params_model.npz"))
