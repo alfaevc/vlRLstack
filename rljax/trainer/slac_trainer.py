@@ -57,6 +57,7 @@ class SLACTrainer(Trainer):
         for step in range(1, self.algo.start_steps + 1):
             self.algo.step(self.env, self.ob)
 
+        print(self.algo.model['encoder'](self.env.reset()))
         # Update latent variable model first so that SLAC can learn well using (learned) latent dynamics.
         bar = tqdm(range(self.algo.initial_learning_steps))
         for _ in bar:

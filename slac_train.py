@@ -1,6 +1,8 @@
 import os
 os.environ["LD_LIBRARY_PATH"] = ":/home/ztan/.mujoco/mujoco200/bin"
 os.environ.get("LD_LIBRARY_PATH", "")
+os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.85"
+
 # os.environ.get('XLA_FLAGS')
 
 import argparse
@@ -22,6 +24,7 @@ import sys
 #from dm_robotics.moma import action_spaces
 
 
+
 import warnings
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -29,7 +32,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 import dmc2gym
 from rgb_stacking import environment
 
-from rnd import RND_CNN
+from rnd import RND
 
 # ptu.set_gpu_mode(True)
 
@@ -49,13 +52,15 @@ def main(args):
     input_channels, input_width, input_height = env.observation_space.shape
     action_dim, = env.action_space.shape
 
-    # rnd = RND_CNN(input_width, input_height, input_channels, action_dim)
+    latent_dim = 256
+    rnd = RND(latent_dim)
 
 
     algo = SLAC(
         num_agent_steps = 10**6,
         state_space = env.observation_space,
         action_space = env.action_space,
+        rnd=rnd,
         seed = args.seed)
 
     trainer = SLACTrainer(

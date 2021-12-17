@@ -101,6 +101,7 @@ class SlacMixIn:
             self.buffer.reset_episode(state)
 
         return None
+    
 
     def select_action(self, ob):
         feature_action = self._preprocess(self.params_model, ob.state, ob.action)
