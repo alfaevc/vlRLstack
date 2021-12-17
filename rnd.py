@@ -20,7 +20,36 @@ class RND_Net(nn.Module):
     def forward(self, x):
         return self.layers(x)
 
+class RND(nn.Module):
+    def __init__(self, state_dim):
+        super().__init__()
+        self.state_dim = state_dim
 
+        self.target = RND_Net(state_dim).cuda()
+        self.moving = RND_Net(state_dim).cuda()
+
+        self.optimizer = torch.optim.Adam(self.moving.parameters(), lr=3e-4)
+        self.loss = nn.MSELoss()
+
+        self.target.eval()
+
+
+    def train(self, state):
+        target = self.target(state)
+        moving = self.moving(state)
+
+        loss = self.loss(moving, target)
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+    
+    def get_reward(self, state):
+        target = self.target(torch.tensor(state, device="cuda", dtype=torch.float32).unsqueeze(0))
+        moving = self.moving(torch.tensor(state, device="cuda", dtype=torch.float32).unsqueeze(0))
+
+        return float(nn.MSELoss(reduction="sum")(moving, target).cpu().data.numpy())
+'''
 class RND_CNN(nn.Module):
     def __init__(self, input_width, input_height, input_channels, action_dim):
         super().__init__()
@@ -80,5 +109,6 @@ class RND_CNN(nn.Module):
         moving = self.moving(torch.tensor(state, device="cuda", dtype=torch.float32).unsqueeze(0))
 
         return float(nn.MSELoss(reduction="sum")(moving, target).cpu().data.numpy())
+'''
 
 

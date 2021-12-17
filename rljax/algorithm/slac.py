@@ -22,6 +22,7 @@ class SLAC(SlacMixIn, SAC):
         num_agent_steps,
         state_space,
         action_space,
+        rnd,
         seed,
         max_grad_norm=None,
         gamma=1,
@@ -66,6 +67,7 @@ class SLAC(SlacMixIn, SAC):
             feature_dim=feature_dim,
             z1_dim=z1_dim,
             z2_dim=z2_dim,
+            rnd=rnd,
         )
         if d2rl:
             self.name += "-D2RL"
@@ -287,6 +289,31 @@ class SLAC(SlacMixIn, SAC):
 
         if writer and self.learning_step_model % 1000 == 0:
             writer.add_scalar("loss/latent", loss_model, self.learning_step_model)
+    
+    def step_rnd(self, env, ob):
+        self.agent_step += 1
+        self.episode_step += 1
+
+        if self.agent_step <= self.start_steps:
+            action = env.action_space.sample()
+        else:
+            action = self.explore(ob)
+
+        state, reward, done, _ = env.step(action)
+        ob.append(state, action)
+        mask = self.get_mask(env, done)
+        z = self.model['encoder'](state)
+        self.buffer.append(action, reward+self.rnd.get_reward(z), mask, state, done)
+        
+        self.rnd.train(z)
+
+        if done:
+            self.episode_step = 0
+            state = env.reset()
+            ob.reset_episode(state)
+            self.buffer.reset_episode(state)
+
+        return None
 
     @partial(jax.jit, static_argnums=0)
     def _loss_model(
